@@ -1,4 +1,4 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <iostream>
 
 using namespace std;
@@ -6,13 +6,18 @@ using namespace std;
 // 1. ##################################################
 // czy moze byc za duza tablica? brak miejsca na stercie
 void v_alloc_table_fill_34(int iSize) {
+    const int IVALUE = 34;
     if (iSize < 1) {
         return;
     }
     int* tab = new int[iSize];
     for (int i = 0; i < iSize; i++) {
-        tab[i] = 34;
+        tab[i] = IVALUE;
     }
+    for (int i = 0; i < iSize; i++) {
+        cout << tab[i] << endl;
+    }
+    delete tab;
 }
 
 // opcja bez bezpośredniej wartości 34
@@ -24,51 +29,63 @@ void v_alloc_table_fill(int iSize, int iValue) {
     for (int i = 0; i < iSize; i++) {
         tab[i] = iValue;
     }
+    for (int i = 0; i < iSize; i++) {
+        cout << tab[i] << endl;
+    }
+    delete tab;
 }
 
 // 2. ##################################################
 // - Zastanów się jak dokładnie co wstawić zamiast ???, 
 // jeżeli użycie referencji jest niemożliwe. 
-bool b_alloc_table_2_dim(int ***piTable, int iSizeX, int iSizeY) {
+bool b_alloc_table_2_dim(int*** piTable, int iSizeX, int iSizeY) {
     if (iSizeX < 1 || iSizeY < 1) {
         return false;
     }
-    *piTable = new int*[iSizeX];
+    *piTable = new int* [iSizeX];
     for (int i = 0; i < iSizeX; i++) {
-        *piTable[i] = new int[iSizeY];
+		(*piTable)[i] = new int[iSizeY];
     }
     return true;
 }
+
 
 // 3. ##################################################
 // - Zastanów się jak dokładnie co wstawić zamiast ???, jeżeli użycie referencji jest 
 // niemożliwe. Czy będzie jakaś różnica w porównaniu z b_alloc_table_2_dim? 
 // - Czy b_dealloc_table_2_dim może mieć mniej parametrów?
-bool b_dealloc_table_2_dim(int ***piTable, int iSizeX) {
+bool b_dealloc_table_2_dim(int*** piTable, int iSizeX) {
     if (iSizeX < 1) {
         return false;
     }
     for (int i = 0; i < iSizeX; i++) {
-        delete *piTable[i];
+        delete[] (*piTable)[i];
     }
-    delete *piTable;
+    delete[] *piTable;
     return true;
+}
+
+int main() {
+    int** tab;
+    printf("Hello, World!\n");
+    b_alloc_table_2_dim(&tab, 5, 5);
+    b_dealloc_table_2_dim(&tab, 5);
 }
 
 // 4. ##################################################
 class CTable {
 private:
     string s_name;
-    int *table;
+    int* table;
     int length;
 public:
     CTable();
     CTable(string sName, int iTableLen);
-    CTable(CTable &pcOther);
+    CTable(CTable& pcOther);
     ~CTable();
     void vSetName(string sName);
     bool bSetNewSize(int iTableLen);
-    CTable *pcClone();
+    CTable* pcClone();
 };
 
 CTable::CTable() {
@@ -85,7 +102,7 @@ CTable::CTable(string sName, int iTableLen) {
     table = new int[iTableLen];
 }
 
-CTable::CTable(CTable &pcOther) {
+CTable::CTable(CTable& pcOther) {
     s_name = pcOther.s_name + "_copy";
     length = pcOther.length;
     table = new int[length];
@@ -108,7 +125,7 @@ bool CTable::bSetNewSize(int iTableLen) {
     if (iTableLen < 1) {
         return false;
     }
-    int *newTable = new int[iTableLen];
+    int* newTable = new int[iTableLen];
     for (int i = 0; i < iTableLen; i++) { // length czy iTableLen
         newTable[i] = table[i];
     }
@@ -118,10 +135,7 @@ bool CTable::bSetNewSize(int iTableLen) {
     return true;
 }
 
-CTable *CTable::pcClone() {
+CTable* CTable::pcClone() {
     return new CTable(*this);
 }
 
-int main() {
-    cout << "Compilation successful" << endl;
-}
