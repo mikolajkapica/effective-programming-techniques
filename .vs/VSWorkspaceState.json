@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\L01",
+    "\\L01\\x64",
     "\\L02"
   ],
-  "SelectedNode": "\\effective_programming_techniques.sln",
+  "SelectedNode": "\\L01\\CTable.h",
   "PreviewInSolutionExplorer": false
 }

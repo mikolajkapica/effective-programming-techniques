@@ -33,6 +33,7 @@ public:
 	CNumber operator/(int iNewVal);
 	std::string sToStr();
 private:
+	bool b_is_negative;
 	int* pi_number;
 	int i_length;
 }; //class CNumber 
