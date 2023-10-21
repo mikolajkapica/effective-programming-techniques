@@ -3,43 +3,120 @@
 #include <iostream>
 #include "CNumber.h"
 
-void testAddition(int a, int b) {
+bool testAddition(int a, int b, int c) {
 	CNumber c_a;
 	CNumber c_b;
+	CNumber c_c;
 	c_a = a;
 	c_b = b;
-	std::cout << c_a.toString() << " + " << c_b.toString() << " = " << (c_a + c_b).toString() << std::endl;
+	c_c = c;
+	bool b_result = c_a + c_b == c_c;
+	if (!b_result) {
+		std::cout << "testAddition failed: " << a << " + " << b << " != " << c << std::endl;
+		std::cout << "c_a: " << c_a.toString() << std::endl;
+		std::cout << "c_b: " << c_b.toString() << std::endl;
+		std::cout << "c_c: " << c_c.toString() << std::endl;
+		std::cout << "c_a + c_b: " << (c_a + c_b).toString() << std::endl;
+	}
+	return b_result;
 }
 
-void testMultiplication(int a, int b) {
+bool testMultiplication(int a, int b, int c) {
 	CNumber c_a;
 	CNumber c_b;
+	CNumber c_c;
 	c_a = a;
 	c_b = b;
-	std::cout << c_a.toString() << " * " << c_b.toString() << " = " << (c_a * c_b).toString() << std::endl;
+	c_c = c;
+	bool b_result = c_a * c_b == c_c;
+	if (!b_result) {
+		std::cout << "testAddition failed: " << a << " * " << b << " != " << c << std::endl;
+		std::cout << "c_a: " << c_a.toString() << std::endl;
+		std::cout << "c_b: " << c_b.toString() << std::endl;
+		std::cout << "c_c: " << c_c.toString() << std::endl;
+		std::cout << "c_a * c_b: " << (c_a * c_b).toString() << std::endl;
+	}
+	return b_result;
 }
 
-void testSubtraction(int a, int b) {
+bool testSubtraction(int a, int b, int c) {
 	CNumber c_a;
 	CNumber c_b;
+	CNumber c_c;
 	c_a = a;
 	c_b = b;
-	std::cout << c_a.toString() << " - " << c_b.toString() << " = " << (c_a - c_b).toString() << std::endl;
+	c_c = c;
+	bool b_result = c_a - c_b == c_c;
+	if (!b_result) {
+		std::cout << "testAddition failed: " << a << " - " << b << " != " << c << std::endl;
+		std::cout << "c_a: " << c_a.toString() << std::endl;
+		std::cout << "c_b: " << c_b.toString() << std::endl;
+		std::cout << "c_c: " << c_c.toString() << std::endl;
+		std::cout << "c_a - c_b: " << (c_a - c_b).toString() << std::endl;
+	}
+	return b_result;
 }
 
-void testDivision(int a, int b) {
+bool testDivision(int a, int b, int c) {
 	CNumber c_a;
 	CNumber c_b;
+	CNumber c_c;
 	c_a = a;
 	c_b = b;
-	std::cout << c_a.toString() << " / " << c_b.toString() << " = " << (c_a / c_b).toString() << std::endl;
+	c_c = c;
+	bool b_result = c_a / c_b == c_c;
+	if (!b_result) {
+		std::cout << "testAddition failed: " << a << " / " << b << " != " << c << std::endl;
+		std::cout << "c_a: " << c_a.toString() << std::endl;
+		std::cout << "c_b: " << c_b.toString() << std::endl;
+		std::cout << "c_c: " << c_c.toString() << std::endl;
+		std::cout << "c_a / c_b: " << (c_a / c_b).toString() << std::endl;
+	}
+	return b_result;
 }
 
-int main()
-{
-	//testAddition(-1,1);
-	//testMultiplication(-45, -5);
-	//testSubtraction(1, 2);
-	testDivision(100, 2);
+int main() {
+	testAddition(253, -235, 18);
+	testAddition(0, -634, -634);
+	testAddition(0, 4, 4);
+	testAddition(0, 0, 0);
+	testAddition(-125, -634, -759);
+	testAddition(125, 634, 759);
+	testAddition(125, 0, 125);
+	testAddition(125, -125, 0);
+	testAddition(125, -634, -509);
+	testAddition(125, 634, 759);
+
+	testMultiplication(253, -235, -59455);
+	testMultiplication(0, -634, 0);
+	testMultiplication(0, 0, 0);
+	testMultiplication(-125, -634, 79250);
+	testMultiplication(125, 634, 79250);
+	testMultiplication(125, 0, 0);
+	testMultiplication(125, -125, -15625);
+	testMultiplication(125, -634, -79250);
+	testMultiplication(125, 634, 79250);
+
+	testSubtraction(253, -235, 488);
+	testSubtraction(0, -634, 634);
+	testSubtraction(0, 0, 0);
+	testSubtraction(-125, -634, 509);
+	testSubtraction(125, 634, -509);
+	testSubtraction(125, 0, 125);
+	testSubtraction(125, -125, 250);
+	testSubtraction(125, -634, 759);
+	testSubtraction(125, 634, -509);
+	testSubtraction(12623, 634, 11989);
+
+	testDivision(253, -235, -1);
+	testDivision(0, -634, 0);
+	testDivision(0, 12, 0);
+	testDivision(-125, -634, 0);
+	testDivision(125, 634, 0);
+	testDivision(253, 125, 2);
+	testDivision(235235, 236, 996);
+	testDivision(125, -125, -1);
+	testDivision(125, -634, 0);
+	testDivision(125, 634, 0);
 }
 

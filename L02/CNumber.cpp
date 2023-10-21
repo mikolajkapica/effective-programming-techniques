@@ -3,31 +3,40 @@
 #include <string>
 
 CNumber intToCNumber(int i_val) {
-	int sign = i_val < 0 ? -1 : 1;
-	int i_val_abs = sign * i_val;
-	int i_length = 1; // 1 for the sign
+	int i_sign = i_val < 0 ? -1 : 1;
+	int i_val_abs = i_sign * i_val;
+	int i_length = 1; // 1 for the i_sign
 	while (i_val_abs > 0) {
 		i_val_abs /= 10;
 		i_length++;
 	}
-
 	int* pi_table = new int[i_length];
-	if (sign == -1) {
-		i_val = -i_val;
-		for (int i = i_length - 1; i >= 0; i--) {
-			pi_table[i] = 9 - (i_val % 10);
-			i_val /= 10;
-		}
-		pi_table[i_length - 1]++;
+	i_val_abs = i_sign * i_val;
+	for (int i = i_length - 1; i >= 0; i--) {
+		pi_table[i] = i_val_abs % 10;
+		i_val_abs /= 10;
 	}
-	else {
-		for (int i = i_length - 1; i >= 0; i--) {
-			pi_table[i] = i_val % 10;
-			i_val /= 10;
-		}
-	}
-
+	if (i_sign == -1) return -CNumber(i_length, pi_table);
 	return CNumber(i_length, pi_table);
+}
+
+void clearRedundantPrefix(int* &pi_table, int& i_length) {
+	if (i_length > 1) {
+		int i_prefix_signs_count = 0;
+		int i_first_digit = pi_table[0];
+		while (pi_table[i_prefix_signs_count] == i_first_digit) {
+			i_prefix_signs_count++;
+		}
+		i_prefix_signs_count--; // we have to keep at least one i_sign
+
+		int* pi_table_new = new int[i_length - i_prefix_signs_count];
+		for (int i = 0; i < i_length - i_prefix_signs_count; i++) {
+			pi_table_new[i] = pi_table[i + i_prefix_signs_count];
+		}
+		delete pi_table; // nie wiem czy musze? bez deletowania nie mam tez bledu // dziwne
+		pi_table = pi_table_new;
+		i_length = i_length - i_prefix_signs_count;
+	}
 }
 
 void CNumber::operator=(const CNumber &pc_other) { 
@@ -41,14 +50,13 @@ void CNumber::operator=(const int i_val) {
 }
 
 CNumber CNumber::operator+(CNumber& pc_new_val) {
-	int i_max_digit = 9;
-
 	int i_length_a = this->i_length;
 	int i_length_b = pc_new_val.i_length;
-	int i_sign_b = pc_new_val.pi_table[0] == i_max_digit ? 1 : -1;
-	int i_sign_a = this->pi_table[0] == i_max_digit ? 1 : -1;
+	int i_first_digit_a = this->pi_table[0];
+	int i_first_digit_b = pc_new_val.pi_table[0];
 
-	int i_length_result = i_length_a > i_length_b ? i_length_a : i_length_b;
+	int i_length_result = i_length_a > i_length_b ? i_length_a: i_length_b;
+	i_length_result++; // for the overflow possibility
 	int *pi_table_result = new int[i_length_result];
 
 	int i_curr_pos_a = this->i_length;
@@ -56,33 +64,21 @@ CNumber CNumber::operator+(CNumber& pc_new_val) {
 	int i_carry = 0;
 
 	for (int i = i_length_result - 1; i >= 0; i--) {
-		int i_a_digit = i_curr_pos_a > 0 ? this->pi_table[--i_curr_pos_a] : 0;
-		int i_b_digit = i_curr_pos_b > 0 ? pc_new_val.pi_table[--i_curr_pos_b] : 0;
+		int i_a_digit = i_curr_pos_a > 0 ? this->pi_table[--i_curr_pos_a] : i_first_digit_a;
+		int i_b_digit = i_curr_pos_b > 0 ? pc_new_val.pi_table[--i_curr_pos_b] : i_first_digit_b;
 		int i_sum = i_a_digit + i_b_digit + i_carry;
 		i_carry = i_sum / 10;
 		pi_table_result[i] = i_sum % 10;
 	}
-	// in case of overflow (e.g. 0999 + 01 = 1000 or 08 + 02 = 10 or 92 + 98 = 
-	if (pi_table_result[0] != 0 && i_length_result != 9) {
-		int *new_pi_table_result = new int[i_length_result + 1];
-		for (int i = i_length_result; i > 0; i--) {
-			new_pi_table_result[i] = pi_table_result[i - 1];
-		}
-		new_pi_table_result[0] = 0;
-		int new_i_length_result = i_length_result + 1;
-		return CNumber(new_i_length_result, new_pi_table_result);
-	}
+
+	clearRedundantPrefix(pi_table_result, i_length_result);
 
 	return CNumber(i_length_result, pi_table_result);
 }
 
 CNumber CNumber::operator*(CNumber& pc_new_val) {
-	int max_digit = 9;
-
 	int i_length_a = this->i_length;
 	int i_length_b = pc_new_val.i_length;
-	int i_sign_a = this->pi_table[0] == max_digit;    // negative then 1
-	int i_sign_b = pc_new_val.pi_table[0] == max_digit; // negative then 1
 
 	int i_length_result = i_length_a + i_length_b - 1;
 
@@ -93,11 +89,11 @@ CNumber CNumber::operator*(CNumber& pc_new_val) {
 
 	for (int i = 0; i < i_length_result; i++) {
 		int i_carry = 0;
-		int multiplier = i < i_length_a ? this->pi_table[i_length_a-i-1] : max_digit * i_sign_a;
+		int multiplier = i < i_length_a ? this->pi_table[i_length_a - i - 1] : this->pi_table[0];
 		if (multiplier == 0) continue;
 		for (int j = 0; j < i_length_result; j++) {
 			if (i_length_result - i - j - 1 < 0) break;
-			int i_multiplicand = j < i_length_b ? pc_new_val.pi_table[i_length_b-j-1] : max_digit * i_sign_b;
+			int i_multiplicand = j < i_length_b ? pc_new_val.pi_table[i_length_b-j-1] : pc_new_val.pi_table[0];
 			if (i_multiplicand == 0 && i_carry == 0) {
 				continue;
 			}
@@ -109,6 +105,9 @@ CNumber CNumber::operator*(CNumber& pc_new_val) {
 		}
 		i_length_b = pc_new_val.i_length;
 	}
+
+	clearRedundantPrefix(pi_result, i_length_result);
+
 	return CNumber(i_length_result, pi_result);
 }
 
@@ -117,17 +116,30 @@ CNumber CNumber::operator-(CNumber& pc_new_val) {
 }
 
 CNumber CNumber::operator/(CNumber& pc_new_val) {
+	int i_sign_a = this->sgn();
+	int i_sign_b = pc_new_val.sgn();
+	if (i_sign_b == 0) {
+		throw "Division by zero";
+	} else if (i_sign_a == 0) {
+		return *this;
+	} else if (i_sign_a == -1 && i_sign_b == -1) {
+		return (-(*this)) / (-pc_new_val);
+	} else if (i_sign_a == -1) {
+		return -((-(*this)) / pc_new_val);
+	} else if (i_sign_b == -1) {
+		return -((*this) / (-pc_new_val));
+	}
 	int i_result = 0;
 	CNumber i_accumulator;
-
 	i_accumulator = 0;
-	while (i_accumulator < *this) {
+
+	while (i_accumulator <= *this) {
 		i_accumulator = i_accumulator + pc_new_val;
 		i_result++;
 	}
 
 	CNumber c_result;
-	c_result = i_result;
+	c_result = i_result - 1;
 
 	return c_result;
 }
@@ -149,12 +161,27 @@ CNumber CNumber::operator/(int i_new_val) {
 }
 
 CNumber CNumber::operator-() {
+	if (this->sgn() == 0) {
+		return *this;
+	}
 	int i_max_digit = 9;
 	int *pi_table = new int[this->i_length];
-	for (int i = 0; i < this->i_length; i++) {
+
+	// find last non zero digit
+	int i_curr_pos = this->i_length - 1;
+	while (this->pi_table[i_curr_pos] == 0) {
+		i_curr_pos--;
+	}
+
+	for (int i = 0; i < i_curr_pos + 1; i++) {
 		pi_table[i] = i_max_digit - this->pi_table[i];
 	}
-	pi_table[this->i_length - 1]++;
+	for (int i = i_curr_pos + 1; i < this->i_length; i++) {
+		pi_table[i] = 0;
+	}
+
+	pi_table[i_curr_pos]++;
+
 	return CNumber(this->i_length, pi_table);
 }
 
@@ -171,11 +198,10 @@ CNumber CNumber::operator+=(int i_val) {
 }
 
 bool CNumber::operator<(CNumber& pc_other) {
-	int i_max_digit = 9;
-	int i_sign_a = this->pi_table[0] == i_max_digit ? 1 : -1;
-	int i_sign_b = pc_other.pi_table[0] == i_max_digit ? 1 : -1;
+	int i_sign_a = this->sgn();
+	int i_sign_b = pc_other.sgn();
 	if (i_sign_a != i_sign_b) {
-		return i_sign_a > i_sign_b;
+		return i_sign_a < i_sign_b;
 	}
 	if (this->i_length != pc_other.i_length) {
 		return this->i_length < pc_other.i_length;
@@ -188,14 +214,21 @@ bool CNumber::operator<(CNumber& pc_other) {
 	return false;
 }
 
+bool CNumber::operator<=(CNumber& pc_other) {
+	return *this < pc_other || *this == pc_other;
+}
+
 bool CNumber::operator>(CNumber& pc_other) {
 	return pc_other < *this;
 }
 
+bool CNumber::operator>=(CNumber& pc_other) {
+	return *this > pc_other || *this == pc_other;
+}
+
 bool CNumber::operator==(CNumber& pc_other) {
-	int i_max_digit = 9;
-	int i_sign_a = this->pi_table[0] == i_max_digit ? 1 : -1;
-	int i_sign_b = pc_other.pi_table[0] == i_max_digit ? 1 : -1;
+	int i_sign_a = this->sgn();
+	int i_sign_b = pc_other.sgn();
 	if (i_sign_a != i_sign_b) {
 		return false;
 	}
@@ -210,9 +243,20 @@ bool CNumber::operator==(CNumber& pc_other) {
 	return true;
 }
 
+int CNumber::sgn() {
+	if (this->pi_table[0] == 9) {
+		return -1;
+	} else if (this->pi_table[0] == 0 && this->pi_table[1] == 0) {
+		return 0;
+	} else if (this->pi_table[0] == 0) {
+		return 1;
+	} else {
+		throw "Invalid number";
+	}
+}
+
 std::string CNumber::toString() {
-	int i_max_digit = 9;
-	if (this->pi_table[0] == i_max_digit) {
+	if (this->sgn() == -1) {
 		return "-" + (- (*this)).toString();
 	}
 	std::string out = "";
