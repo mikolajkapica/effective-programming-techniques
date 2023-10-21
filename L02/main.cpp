@@ -3,19 +3,43 @@
 #include <iostream>
 #include "CNumber.h"
 
+void testAddition(int a, int b) {
+	CNumber c_a;
+	CNumber c_b;
+	c_a = a;
+	c_b = b;
+	std::cout << c_a.toString() << " + " << c_b.toString() << " = " << (c_a + c_b).toString() << std::endl;
+}
+
+void testMultiplication(int a, int b) {
+	CNumber c_a;
+	CNumber c_b;
+	c_a = a;
+	c_b = b;
+	std::cout << c_a.toString() << " * " << c_b.toString() << " = " << (c_a * c_b).toString() << std::endl;
+}
+
+void testSubtraction(int a, int b) {
+	CNumber c_a;
+	CNumber c_b;
+	c_a = a;
+	c_b = b;
+	std::cout << c_a.toString() << " - " << c_b.toString() << " = " << (c_a - c_b).toString() << std::endl;
+}
+
+void testDivision(int a, int b) {
+	CNumber c_a;
+	CNumber c_b;
+	c_a = a;
+	c_b = b;
+	std::cout << c_a.toString() << " / " << c_b.toString() << " = " << (c_a / c_b).toString() << std::endl;
+}
+
 int main()
 {
-	//CNumber c_num_0, c_num_1; 
-	//c_num_0 = -9999; 
-	//c_num_1 = 1111; 
-	//std::cout << "Solution: " << (c_num_1 - 5).toString() << std::endl;
-
-	CNumber c_num_0, c_num_1; 
-	c_num_0 = -5;
-	c_num_1 = 45;
-	std::cout << "Solution: " << (c_num_0 * c_num_1).toString() << std::endl;
-	
-	//std::cout << (c_num_0 + c_num_1).sToStr() << std::endl;
-	//std::cout << (c_num_0 * c_num_1).sToStr() << std::endl;
-	//std::cout << (c_num_0 / c_num_1).sToStr() << std::endl;
+	//testAddition(-1,1);
+	//testMultiplication(-45, -5);
+	//testSubtraction(1, 2);
+	testDivision(100, 2);
 }
+
