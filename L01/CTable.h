@@ -3,22 +3,23 @@
 #include <stdio.h>
 #include <string>
 
-using namespace std;
-
 class CTable {
-private:
-	string s_name;
-	int* table;
-	int length;
 public:
 	CTable();
-	CTable(string sName, int iTableLen);
-	CTable(CTable& pcOther);
+	CTable(std::string sName, int iTableLen);
+	CTable(CTable &pcOther);
 	~CTable();
-	void vSetName(string sName);
+	CTable *pcClone();
+
+	void vSetName(std::string sName);
 	bool bSetNewSize(int iTableLen);
-	CTable* pcClone();
-	void printState();
+	void vModTab(CTable *pcTab, int iNewSize);
+
+	void vPrintState();
+private:
+	std::string s_name;
+	int *pi_table;
+	int i_length;
 };
 
 
