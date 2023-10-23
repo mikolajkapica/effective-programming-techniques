@@ -1,9 +1,6 @@
 #include "CTable.h"
 
 CTable::CTable() {
-    const std::string S_DEFAULT_NAME = "default";
-    const int I_DEFAULT_LENGTH = 10;
-
     this->s_name = S_DEFAULT_NAME;
     this->i_length = I_DEFAULT_LENGTH;
     this->pi_table = new int[I_DEFAULT_LENGTH];
@@ -19,9 +16,7 @@ CTable::CTable(std::string s_name, int i_table_length) {
     std::cout << "parametr: '" + s_name << "'" << std::endl;
 }
 
-CTable::CTable(CTable &pc_other) {
-    const std::string S_COPY_SUFFIX = "_copy";
-
+CTable::CTable(const CTable &pc_other) {
     this->s_name = pc_other.s_name + S_COPY_SUFFIX;
     this->i_length = pc_other.i_length;
     this->pi_table = new int[pc_other.i_length];
@@ -29,7 +24,16 @@ CTable::CTable(CTable &pc_other) {
         this->pi_table[i] = pc_other.pi_table[i];
     }
 
-    std::cout << "kopiuj: '" + this->s_name << "'" << std::endl;
+	std::cout << "kopiuj: '" + this->s_name << "'" << std::endl;
+}
+
+CTable::CTable(bool) {
+	this->s_name = S_MODIFICATION_NAME;
+	this->i_length = I_MODIFICATION_LENGTH;
+	this->pi_table = new int[I_MODIFICATION_LENGTH];
+	for (int i = 0; i < I_MODIFICATION_LENGTH; i++) {
+		this->pi_table[i] = i + 1;
+	}
 }
 
 CTable::~CTable() {
@@ -43,41 +47,42 @@ void CTable::vSetName(std::string s_name) {
 }
 
 bool CTable::bSetNewSize(int i_table_length) {
-    if (i_table_length < 1) {
+    if (i_table_length < 0) {
         return false;
     }
 
-    int *newTable = new int[i_table_length];
-    for (int i = 0; i < i_table_length; i++) { 
-        newTable[i] = this->pi_table[i];
-    }
+    int *pi_new_table = new int[i_table_length];
+    std::copy(this->pi_table, this->pi_table + std::min(i_table_length, this->i_length), pi_new_table);
 
     delete[] this->pi_table;
 
-    this->pi_table = newTable;
+    this->pi_table = pi_new_table;
     this->i_length = i_table_length;
     return true;
 }
 
+void CTable::vAdd1andCopy(CTable **pc_copy) {
+    *pc_copy = this->pcClone();
+    (*pc_copy)->vSetName((*pc_copy)->s_name + S_COPY_SUFFIX);
+    (*pc_copy)->bSetNewSize(this->i_length + 1);
+    (*pc_copy)->pi_table[this->i_length] = 1;
+}
+
 CTable *CTable::pcClone() {
-    CTable *new_CTable = new CTable(*this);
-    new_CTable->vSetName(this->s_name);
-    return new_CTable;
+    CTable *pi_new_CTable = new CTable(*this);
+    pi_new_CTable->vSetName(this->s_name);
+    return pi_new_CTable;
 }
 
-void CTable::vModTab(CTable *pcTab, int iNewSize) {
-	pcTab->bSetNewSize(iNewSize);
-}
-
-// nic nie zmieni, bo to jest kopia
-//void vModTab2(CTable cTab, int iNewSize) {
-//	cTab.bSetNewSize(iNewSize);
-//}
-
-void CTable::vPrintState() {
-	std::cout << "s_name: " << this->s_name << std::endl;
-	std::cout << "length: " << this->i_length << std::endl;
+std::string CTable::sToString() {
+    std::string s_out = "";
+	s_out += "s_name: " + this->s_name + "\n";
+	s_out += "length: " + std::to_string(this->i_length) + "\n";
+    s_out += "[";
     for (int i = 0; i < this->i_length; i++) {
-		std::cout << this->pi_table[i] << std::endl;
+        s_out += std::to_string(this->pi_table[i]) + "; ";
 	}
+    s_out.erase(s_out.end() - 2, s_out.end());
+    s_out += "]";
+    return s_out;
 }
