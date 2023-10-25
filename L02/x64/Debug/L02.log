@@ -1,2 +1,4 @@
-﻿  CNumber.cpp
+﻿  Main.cpp
+C:\Users\mikol\Desktop\effective_programming_techniques\L02\Main.cpp(111,29): warning C4305: "argument": obcięcie z "__int64" do "int"
+C:\Users\mikol\Desktop\effective_programming_techniques\L02\Main.cpp(111,29): warning C4309: "argument": obcięcie stałej wartości
   L02.vcxproj -> C:\Users\mikol\Desktop\effective_programming_techniques\L02\x64\Debug\L02.exe
