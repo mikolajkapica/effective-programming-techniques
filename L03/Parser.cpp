@@ -1,5 +1,4 @@
 #include "Parser.h"
-#include "Tree.h"
 #include <iostream>
 
 bool hasALetter(std::string t) {
@@ -36,9 +35,7 @@ bool isNumber(std::string t) {
 	return true;
 }
 
-
-
-data_type type(std::string &t) {
+E_TOKEN_TYPE type(std::string &t) {
 	if (t == "+" || t == "-" || t == "*" || t == "/" || t == "^") {
 		return OPERATOR;
 	} else if (isVariableOrFunction(t)) {
@@ -51,34 +48,31 @@ data_type type(std::string &t) {
 	}
 }
 
-void Parser::parse() {
-	if (this->tokens.size() == 0) {
-		std::cout << "No tokens to parse" << std::endl;
-		throw std::exception("No tokens to parse");
-	}
-	BinaryTree tree = BinaryTree();
-	for (int i = 0; i < this->tokens.size(); i++) {
-		if (type(this->tokens[i]) == OPERATOR) {
-			tree.insert(this->tokens[i]);
-		}
-		else if (type(this->tokens[i]) == NUMBER) {
-			tree.insert(this->tokens[i]);
-		}
-		else if (type(this->tokens[i]) == VARIABLE_OR_FUNCTION) {
-			tree.insert(this->tokens[i]);
+void Parser::lex() {
+	int i_start_word = 0;
+	for (int i = 0; i < this->s_input.length(); i++) {
+		if (this->s_input[i] == ' ') {
+			std::string s_lexeme = this->s_input.substr(i_start_word, i - i_start_word);
+			E_TOKEN_TYPE e_type = type(s_lexeme);
+			this->v_tokens.push_back(new Token(e_type, s_lexeme));
+			i_start_word = i+1;
 		}
 	}
-
-	
 }
 
-void Parser::lex() {
-	int i_last_word_end = 0;
-	for (int i = 0; i < strlen(this->input); i++) {
-		if (this->input[i] == ' ') {
-			this->tokens.push_back(std::string(this->input + i_last_word_end, i - i_last_word_end));
-			i_last_word_end = i;
-		}
+void Parser::parse() {
+}
+
+std::string Token::sToString() {
+	E_TOKEN_TYPE e_type = this->cGetTokenType();
+	std::string s_type;
+	switch (e_type) {
+		case E_TOKEN_TYPE::OPERATOR: s_type = "OPERATOR"; break;
+		case E_TOKEN_TYPE::NUMBER: s_type = "NUMBER"; break;
+		case E_TOKEN_TYPE::VARIABLE_OR_FUNCTION: s_type = "VARIABLE_OR_FUNCTION"; break;
+		case E_TOKEN_TYPE::VARIABLE: s_type = "VARIABLE"; break;
+		case E_TOKEN_TYPE::FUNCTION: s_type = "FUNCTION"; break;
 	}
+	return "Token: [" + this->s_lexeme + "] [" + s_type + "]\n";
 }
 

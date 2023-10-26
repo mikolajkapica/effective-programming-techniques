@@ -1,19 +1,17 @@
-﻿#include <iostream>
+﻿#include "Parser.h"
 #include "Tree.h"
-#include "Parser.h"
+#include <iostream>
+#include <vector>
+#include <string>
 
 int main() {
-	const char *s_input = "+ * 5 sin x * + a b 8";
-	Parser parser = Parser(s_input);
-	parser.lex();
+	//const char *s_input = "+ * 5 sin x * + a b 8";
+	//Parser parser = Parser(s_input);
 
-	std::cout << "Tokens: ";
-	std::vector<std::string> tokens = parser.getTokens();
-	for (int i = 0; i < tokens.size() - 1; i++) {
-		std::cout << tokens[i] << " ";
-	}
-	std::cout << std::endl;
-
-	BinaryTree tree = BinaryTree();
-
+	// LEXER
+	//parser.lex();
+	//std::vector<Token*> tokens = parser.getTokens();
+	//for (int i = 0; i < tokens.size() - 1; i++) {
+	//	std::cout << tokens[i]->sToString();
+	//}
 }

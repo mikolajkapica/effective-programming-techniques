@@ -1,32 +1,38 @@
 #pragma once
-#include <iostream>
+#include "Parser.h"
+#include <vector>
 #include <string>
+
+using namespace std;
 
 class Node {
 public:
-    int data;
-    Node* left;
-    Node* right;
+    Node(Token* apc_token);
+    ~Node() { 
+		delete this->pc_token; 
+        for (int i = 0; i < v_children.size(); i++) { 
+            delete v_children[i]; 
+        } 
+    }
+    Node *pcGetParent() { return this->pc_parent; }
+    Token *pcGetToken() { return this->pc_token; }
+    std::vector<Node*> vGetChildren() { return this->v_children; }
+	Node *pcGetChild(int i_index) { return this->v_children[i_index]; }
+    std::string sGetValue() { return this->pc_token->sGetLexeme(); }
 
-    Node(int value) : data(value), left(nullptr), right(nullptr) {}
-    ~Node() {
-		delete left;
-		delete right;
-	}
+private:
+    Node *pc_parent;
+    Token *pc_token;
+    std::vector<Node*> v_children;
 };
 
-class BinaryTree {
+class Tree {
 public:
-    BinaryTree() : root(nullptr) {}
-    BinaryTree() : root(nullptr) {}
-    ~BinaryTree() {
-        delete this->root;
-    }
-
-    Node* insert(Node *node, std::string value);
-    void insert(std::string value);
-    std::string toString();
-    std::string inorderTraversal(Node *root);
+    Tree() : pc_root(nullptr), pc_current_node(nullptr) {};
+    ~Tree() { delete this->pc_root; }
+    Node* pcInsert(Node* node);
+    std::string sToString();
 private:
-    Node* root;
+    Node* pc_root;
+    Node* pc_current_node;
 };
