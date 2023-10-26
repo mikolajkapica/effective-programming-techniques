@@ -135,5 +135,4 @@ int main() {
 	}
 	std::cout << "\033[0m" << std::endl;
 	std::cout << "Passed " << passed << " out of 40 tests" << std::endl;
-
 }

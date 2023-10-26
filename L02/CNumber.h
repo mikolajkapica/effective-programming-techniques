@@ -61,6 +61,7 @@ public:
 	bool operator>=(int i_val);
 	bool operator==(int i_val);
 	int sgn();
+	CNumber abs();
 	CNumber cGetWithoutSign(CNumber& pc_other);
 	std::string toString();
 

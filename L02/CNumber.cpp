@@ -120,20 +120,19 @@ CNumber CNumber::operator*(CNumber& pc_new_val) {
 	for (int i = 0; i < i_length_result; i++) {
 		int i_carry = 0;
 		int multiplier = i < i_length_a ? this->pi_table[i_length_a - i - 1] : this->pi_table[0];
-		if (multiplier == 0) continue;
-		for (int j = 0; j < i_length_result; j++) {
-			if (i_length_result - i - j - 1 < 0) break;
-			int i_multiplicand = j < i_length_b ? pc_new_val.pi_table[i_length_b-j-1] : pc_new_val.pi_table[0];
-			if (i_multiplicand == 0 && i_carry == 0) {
-				continue;
+		if (multiplier != 0) {
+			for (int j = 0; j < i_length_result && i_length_result - i - j - 1 >= 0; j++) {
+				int i_multiplicand = j < i_length_b ? pc_new_val.pi_table[i_length_b-j-1] : pc_new_val.pi_table[0];
+				if (!(i_multiplicand == 0 && i_carry == 0)) {
+					int i_product = multiplier * i_multiplicand;
+					int i_sum = pi_result[i_length_result - i - j - 1] + i_product + i_carry;
+					int i_digit = i_sum % I_BASE;
+					i_carry = i_sum / I_BASE;
+					pi_result[i_length_result - i - j - 1] = i_digit;
+				}
 			}
-			int i_product = multiplier * i_multiplicand;
-			int i_sum = pi_result[i_length_result - i - j - 1] + i_product + i_carry;
-			int i_digit = i_sum % I_BASE;
-			i_carry = i_sum / I_BASE;
-			pi_result[i_length_result - i - j - 1] = i_digit;
+			i_length_b = pc_new_val.i_length;
 		}
-		i_length_b = pc_new_val.i_length;
 	}
 
 	clearRedundantPrefix(pi_result, i_length_result);
@@ -208,39 +207,20 @@ CNumber CNumber::operator/(CNumber& pc_new_val) {
 		c_current_operations = c_current_operations * 10 + c_a.pi_table[i_length_b - 1 - 1 + i_current_result_position];
 		int i_approximate_division = c_a.pi_table[i_current_result_position] / i_first_digit_b;
 
-		while (true) {
-			CNumber c_division_result = c_current_operations - c_b * i_approximate_division;
-			// print some info
-			//std::cout << "" << std::endl;
-			//std::cout << "c_current_operations: " << c_current_operations.toString() << std::endl;
-			//std::cout << "c_b * i_approximate_division: " << (c_b * i_approximate_division).toString() << std::endl;
-			//std::cout << "c_division_result: " << c_division_result.toString() << std::endl;
-			//std::cout << "i_approximate_division: " << i_approximate_division << std::endl;
-			//std::cout << "i_current_result_position: " << i_current_result_position << std::endl;
+		bool b_run = true;
+		while (b_run) {
+			CNumber c_division_leftover = c_current_operations - c_b * i_approximate_division;
 
-
-			if (c_division_result < 0) {
-				if (!b_first_iteration && !b_was_smaller) {
-					pi_table_result[i_current_result_position] = i_approximate_division - 1;
-					c_current_operations = c_current_operations - c_b * (i_approximate_division - 1);
-					break;
-				}
-				b_was_smaller = true;
-				i_approximate_division--;
-				b_first_iteration = false;
-			} else if (c_division_result > 0) {
-				if (!b_first_iteration && b_was_smaller) {
-					pi_table_result[i_current_result_position] = i_approximate_division;
-					c_current_operations = c_current_operations - c_b * i_approximate_division;
-					break;
-				}
-				b_was_smaller = false;
-				b_first_iteration == false;
-				i_approximate_division++;
-			} else {
+			if (c_division_leftover >= 0 && c_division_leftover < c_b) {
 				pi_table_result[i_current_result_position] = i_approximate_division;
 				c_current_operations = c_current_operations - c_b * i_approximate_division;
-				break;
+				b_run = false;
+			} else {
+				if (c_division_leftover < 0) {
+					i_approximate_division--;
+				} else {
+					i_approximate_division++;
+				}
 			}
 		}
 	}
@@ -423,14 +403,14 @@ int CNumber::sgn() {
 	} else if (this->pi_table[0] == 0) {
 		return 1;
 	} else {
-		for (int i = 0; i < this->i_length; i++) {
-			if (this->pi_table[i] != 0) {
-				return 1;
-			}
-		}
+		// ?????
 		std::cout << "Invalid number" << this->pi_table[0] << std::endl;
 		throw "Invalid number";
 	}
+}
+
+CNumber CNumber::abs() {
+	return  (*this) * this->sgn();
 }
 
 std::string CNumber::toString() {
