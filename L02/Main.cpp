@@ -4,12 +4,9 @@
 #include "CNumber.h"
 
 bool testAddition(int a, int b, int c) {
-	CNumber c_a;
-	CNumber c_b;
-	CNumber c_c;
-	c_a = a;
-	c_b = b;
-	c_c = c;
+	CNumber c_a = a;
+	CNumber c_b = b;
+	CNumber c_c = c;
 	bool b_result = c_a + c_b == c_c;
 	if (!b_result) {
 		std::cout << "testAddition failed: " << a << " + " << b << " != " << c << std::endl;
@@ -22,12 +19,9 @@ bool testAddition(int a, int b, int c) {
 }
 
 bool testMultiplication(int a, int b, int c) {
-	CNumber c_a;
-	CNumber c_b;
-	CNumber c_c;
-	c_a = a;
-	c_b = b;
-	c_c = c;
+	CNumber c_a = a;
+	CNumber c_b = b;
+	CNumber c_c = c;
 	bool b_result = c_a * c_b == c_c;
 	if (!b_result) {
 		std::cout << "testMultiplication failed: " << a << " * " << b << " != " << c << std::endl;
@@ -40,12 +34,9 @@ bool testMultiplication(int a, int b, int c) {
 }
 
 bool testSubtraction(int a, int b, int c) {
-	CNumber c_a;
-	CNumber c_b;
-	CNumber c_c;
-	c_a = a;
-	c_b = b;
-	c_c = c;
+	CNumber c_a = a;
+	CNumber c_b = b;
+	CNumber c_c = c;
 	bool b_result = c_a - c_b == c_c;
 	if (!b_result) {
 		std::cout << "testSubtraction failed: " << a << " - " << b << " != " << c << std::endl;
@@ -58,12 +49,9 @@ bool testSubtraction(int a, int b, int c) {
 }
 
 bool testDivision(int a, int b, int c) {
-	CNumber c_a;
-	CNumber c_b;
-	CNumber c_c;
-	c_a = a;
-	c_b = b;
-	c_c = c;
+	CNumber c_a = a;
+	CNumber c_b = b;
+	CNumber c_c = c;
 	bool b_result = c_a / c_b == c_c;
 	if (!b_result) {
 		std::cout << "testDivision failed: " << a << " / " << b << " != " << c << std::endl;

@@ -1,3 +1,7 @@
 ﻿  CNumber.cpp
-C:\Users\mikol\Desktop\effective_programming_techniques\L02\CNumber.cpp(186,7): warning C4101: "b_was_smaller": lokalna zmienna, do której nie istnieje odwołanie
+C:\Users\mikol\Desktop\effective_programming_techniques\L02\CNumber.cpp(215,7): warning C4101: "b_was_smaller": lokalna zmienna, do której nie istnieje odwołanie
+  Main.cpp
+C:\Users\mikol\Desktop\effective_programming_techniques\L02\Main.cpp(99,29): warning C4305: "argument": obcięcie z "__int64" do "int"
+C:\Users\mikol\Desktop\effective_programming_techniques\L02\Main.cpp(99,29): warning C4309: "argument": obcięcie stałej wartości
+  Generowanie kodu...
   L02.vcxproj -> C:\Users\mikol\Desktop\effective_programming_techniques\L02\x64\Debug\L02.exe

@@ -61,8 +61,37 @@ void clearRedundantPrefix(int* &pi_table, int& i_length) {
 	}
 }
 
-void CNumber::operator=(const CNumber &pc_other) { 
-	if (this->pi_table != nullptr) {
+CNumber::CNumber(int i_length, int* pi_table) {
+	if (i_length == 1) {
+		if (pi_table[0] == 0 || pi_table[0] == I_BASE - 1) {
+			this->i_length = 2;
+			this->pi_table = new int[2];
+			this->pi_table[0] = 0;
+			this->pi_table[1] = 0;
+			return;
+		}
+		std::cout << "here!" << std::endl;
+		throw "Invalid number";
+	}
+	this->i_length = i_length;
+	this->pi_table = pi_table;
+}
+
+CNumber::CNumber(const CNumber& pc_other) {
+	this->i_length = pc_other.i_length;
+	this->pi_table = new int[pc_other.i_length];
+	std::copy(pc_other.pi_table, pc_other.pi_table + pc_other.i_length, this->pi_table);
+}
+
+CNumber::CNumber(int i_val) {
+	CNumber pc_res = intToCNumber(i_val);
+	this->i_length = pc_res.i_length;
+	this->pi_table = new int[pc_res.i_length];
+	std::copy(pc_res.pi_table, pc_res.pi_table + pc_res.i_length, this->pi_table);
+}
+
+void CNumber::operator=(const CNumber& pc_other) {
+	if (this->pi_table != NULL) {
 		delete this->pi_table;
 	}
 	this->i_length = pc_other.i_length;
@@ -396,17 +425,19 @@ bool CNumber::operator==(int i_val) {
 
 
 int CNumber::sgn() {
-	if (this->pi_table[0] == I_BASE - 1) {
+	if (this->pi_table[0] == I_BASE - 1) { // 9
 		return -1;
-	} else if (this->pi_table[0] == 0 && this->pi_table[1] == 0) {
+	} else if (this->pi_table[0] == 0 && this->pi_table[1] == 0) { // 0 0
 		return 0;
-	} else if (this->pi_table[0] == 0) {
+	} else if (this->pi_table[0] == 0) { // 0 1
 		return 1;
-	} else {
-		// ?????
-		std::cout << "Invalid number" << this->pi_table[0] << std::endl;
-		throw "Invalid number";
-	}
+	} 
+	return -325235; // XD
+
+	//else { 
+	//	std::cout << "Invalid number" << this->pi_table[0] << std::endl;
+	//	throw "Invalid number";
+	//}
 }
 
 CNumber CNumber::abs() {
