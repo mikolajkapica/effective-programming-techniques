@@ -1,29 +1,4 @@
-﻿  main.cpp
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(10,10): error C2061: błąd składniowy: identyfikator „Token”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(18,11): error C2143: błąd składniowy: brakuje „;” przed „*”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(18,11): error C4430: brak specyfikatora typu - założono, że int. Uwaga: C++ nie obsługuje domyślnie typu int
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(18,25): error C2334: nieoczekiwany(e) token(y) poprzedzające "{"; pomijanie treści widocznych funkcji
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(25,11): error C2143: błąd składniowy: brakuje „;” przed „*”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(25,11): error C4430: brak specyfikatora typu - założono, że int. Uwaga: C++ nie obsługuje domyślnie typu int
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(25,20): error C2238: nieoczekiwany(e) token(y) poprzedzający(e) ";"
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(12,16): error C2039: „pc_token”: nie jest składową elementu „Node”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(8,7): message : zobacz deklarację „Node”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(21,44): error C2039: „pc_token”: nie jest składową elementu „Node”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(8,7): message : zobacz deklarację „Node”
-  Parser.cpp
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(10,10): error C2061: błąd składniowy: identyfikator „Token”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(18,11): error C2143: błąd składniowy: brakuje „;” przed „*”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(18,11): error C4430: brak specyfikatora typu - założono, że int. Uwaga: C++ nie obsługuje domyślnie typu int
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(18,25): error C2334: nieoczekiwany(e) token(y) poprzedzające "{"; pomijanie treści widocznych funkcji
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(25,11): error C2143: błąd składniowy: brakuje „;” przed „*”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(25,11): error C4430: brak specyfikatora typu - założono, że int. Uwaga: C++ nie obsługuje domyślnie typu int
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(25,20): error C2238: nieoczekiwany(e) token(y) poprzedzający(e) ";"
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(12,16): error C2039: „pc_token”: nie jest składową elementu „Node”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(8,7): message : zobacz deklarację „Node”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(21,44): error C2039: „pc_token”: nie jest składową elementu „Node”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Tree.h(8,7): message : zobacz deklarację „Node”
-  Tree.cpp
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Parser.h(45,7): error C2143: błąd składniowy: brakuje „;” przed „*”
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Parser.h(45,7): error C4430: brak specyfikatora typu - założono, że int. Uwaga: C++ nie obsługuje domyślnie typu int
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Parser.h(45,15): error C2238: nieoczekiwany(e) token(y) poprzedzający(e) ";"
-  Generowanie kodu...
+﻿  Evaluator.cpp
+C:\Users\mikol\Desktop\effective_programming_techniques\L03\Evaluator.cpp(20): warning C4715: "dOperatorDispatcher”: niewszystkie ścieżki kodu zwracają wartość
+C:\Users\mikol\Desktop\effective_programming_techniques\L03\Evaluator.cpp(45): warning C4715: "dEvaluateHelper”: niewszystkie ścieżki kodu zwracają wartość
+  L03.vcxproj -> C:\Users\mikol\Desktop\effective_programming_techniques\L03\x64\Debug\L03.exe
