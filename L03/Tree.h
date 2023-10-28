@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include "Errors.h"
 
 class Parser;
 class Token;
@@ -9,14 +10,12 @@ class Node;
 
 class Tree {
 public:
-    Tree() : pc_root(NULL), pc_current_node(pc_root) {}
+    Tree() : pc_root(NULL) {}
     ~Tree();
-    void pcInsert(Node* node);
-    void pcInsert(Token* token);
-    std::vector<std::string> vecGetVariables();
-    std::string sToString();
+    E_ERROR_TYPE pcInsert(Token* token);
     Node *pcGetRoot() { return pc_root; }
+    std::string sToString();
 private:
+    E_ERROR_TYPE pcInsertAux(Token* token, Node* pc_current_node);
     Node* pc_root;
-    Node *pc_current_node;
 };  

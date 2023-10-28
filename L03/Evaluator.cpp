@@ -19,36 +19,23 @@ double dOperatorDispatcher(Node* node, std::vector<double> arguments) {
 	}
 }
 
-double dEvaluateHelper(Node* pc_current_node, std::map<std::string, int> map_vars) {
-	std::cout << "Evaluating: " << pc_current_node->sGetTokensLexeme() << std::endl;
-	if (pc_current_node->eGetTokenType() == E_TOKEN_TYPE::VARIABLE)
-		std::cout << "Variable: " << pc_current_node->sGetTokensLexeme() << " value: " << map_vars[pc_current_node->sGetTokensLexeme()] << std::endl;
-	switch (pc_current_node->eGetTokenType()) {
+double dEvaluateHelper(Node* pc_current_node, std::map<std::string, double> map_vars) {
+		switch (pc_current_node->eGetTokenType()) {
 		case E_TOKEN_TYPE::NUMBER:
 			return std::stod(pc_current_node->sGetTokensLexeme());
-			break;
 		case E_TOKEN_TYPE::VARIABLE:
 			return map_vars[pc_current_node->sGetTokensLexeme()];
-			break;
 		case E_TOKEN_TYPE::OPERATOR:
 			std::vector<double> arguments;
-			for (int i = 0; i < pc_current_node->vGetChildren().size(); i++) {
-				if (pc_current_node->pcGetChild(i) != NULL) {
-					arguments.push_back(dEvaluateHelper(pc_current_node->pcGetChild(i), map_vars));
-				}
+			for (int i = 0; i < pc_current_node->vecGetChildren().size(); i++) {
+				arguments.push_back(dEvaluateHelper(pc_current_node->pcGetChild(i), map_vars));
 			}
-			double res = dOperatorDispatcher(pc_current_node, arguments);
-			std::cout << "Result: " << res << std::endl;
-			return res;
-			break;
+			return dOperatorDispatcher(pc_current_node, arguments);
 	}
 }
 
-double Evaluator::dEvaluate(Tree* tree, std::map<std::string, int> map_vars) {
-	Node *current_node = tree->pcGetRoot();
-	//while (current_node->eGetTokenType() == E_TOKEN_TYPE::OPERATOR) {
-	//	current_node = current_node->pcGetChild(0);
-	//}
+double Evaluator::dEvaluateTree(Tree* tree, std::map<std::string, double> map_vars) {
+	Node* current_node = tree->pcGetRoot();
 	return dEvaluateHelper(current_node, map_vars);
 }
 

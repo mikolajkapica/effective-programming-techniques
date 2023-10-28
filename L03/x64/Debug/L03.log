@@ -1,4 +1,2 @@
-﻿  Evaluator.cpp
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Evaluator.cpp(20): warning C4715: "dOperatorDispatcher”: niewszystkie ścieżki kodu zwracają wartość
-C:\Users\mikol\Desktop\effective_programming_techniques\L03\Evaluator.cpp(45): warning C4715: "dEvaluateHelper”: niewszystkie ścieżki kodu zwracają wartość
+﻿  Parser.cpp
   L03.vcxproj -> C:\Users\mikol\Desktop\effective_programming_techniques\L03\x64\Debug\L03.exe

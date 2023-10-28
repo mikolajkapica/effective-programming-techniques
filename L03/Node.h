@@ -11,21 +11,16 @@ public:
     ~Node();
 
     Node* pcGetParent() { return this->pc_parent; }
-    Token* pcGetToken() { return this->pc_token; }
-    std::vector<Node*> vGetChildren() { return this->v_children; }
-	Node *pcGetChild(int i_index) { return this->v_children[i_index]; }
-    void vSetChild(int i_index, Node* node) {
-		this->v_children[i_index] = node;
-		this->i_empty_children_count--;
-	}
+    std::vector<Node*> vecGetChildren() { return this->vec_children; }
+	Node *pcGetChild(int i_index) { return this->vec_children[i_index]; }
     int iGetEmptyChildrenCount() { return this->i_empty_children_count; }
-    void vSetParent(Node* node) { this->pc_parent = node; }
-
+    Token* pcGetToken() { return this->pc_token; }
     std::string sGetTokensLexeme();
     E_TOKEN_TYPE eGetTokenType();
+    void vSetChild(int i_index, Node* node);
 private:
     Node *pc_parent;
     Token *pc_token;
-    std::vector<Node*> v_children;
+    std::vector<Node*> vec_children;
     int i_empty_children_count;
 };

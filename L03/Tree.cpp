@@ -5,73 +5,48 @@
 #include "Parser.h"
 #include "Token.h"
 #include "Node.h"
+#include "Errors.h"
 
 Tree::~Tree() {
 	delete this->pc_root;
 }
 
-void Tree::pcInsert(Node *node) {
-	if (this->pc_current_node == NULL) {
-		if (this->pc_root == NULL) {
-			this->pc_root = node;
-			this->pc_current_node = node;
-			return;
-		} else {
-			std::cout << "weird root is not null and current node is null" << std::endl;
-		}
+E_ERROR_TYPE Tree::pcInsertAux(Token *token, Node* pc_current_node) {
+	Node *node = new Node(token);
+	if (this->pc_root == NULL) {
+		this->pc_root = node;
+		pc_current_node = node;
+		return E_ERROR_TYPE::NO_ERROR;
 	} 
-	for (int i = 0; i < pc_current_node->vGetChildren().size(); i++) {
-		if (pc_current_node->vGetChildren()[i] == NULL) {
+	for (int i = 0; i < pc_current_node->vecGetChildren().size(); i++) {
+		Node* pc_child_node = pc_current_node->pcGetChild(i);
+		if (pc_child_node == NULL) {
 			pc_current_node->vSetChild(i, node);
-			node->vSetParent(pc_current_node);
-			return;
-		} else if (pc_current_node->vGetChildren()[i]->iGetEmptyChildrenCount() > 0) {
-			pc_current_node = pc_current_node->vGetChildren()[i];
-			pcInsert(node);
-			return;
+			return E_ERROR_TYPE::NO_ERROR;
+		} else if (pc_child_node->iGetEmptyChildrenCount() > 0) {
+			this->pcInsertAux(token, pc_child_node);
+			return E_ERROR_TYPE::NO_ERROR;
 		}
 	}
-	pc_current_node = pc_current_node->pcGetParent();
-	this->pcInsert(node);
-}
-
-void Tree::pcInsert(Token* token) {
-	return this->pcInsert(new Node(token));
-}
-
-std::string toStringAux(Node* pc_current_node, int level) {
-	std::string s_out;
-	for (int i = 0; i < level; i++) {
-		s_out += "|";
+	if (pc_current_node->pcGetParent() == NULL) {
+		return E_ERROR_TYPE::PARSING_PROBLEM;
 	}
-	s_out += pc_current_node->sGetTokensLexeme() + "\n";
-	for (int i = 0; i < pc_current_node->vGetChildren().size(); i++) {
-		if (pc_current_node->vGetChildren()[i] != NULL) {
-			s_out += toStringAux(pc_current_node->vGetChildren()[i], level + 1);
-		}
+	this->pcInsertAux(token, pc_current_node->pcGetParent());
+}
+
+E_ERROR_TYPE Tree::pcInsert(Token* token) {
+	return this->pcInsertAux(token, this->pc_root);
+}
+
+std::string toStringAux(Node* pc_current_node) {
+	std::string s_out = pc_current_node->sGetTokensLexeme() + " ";
+	for (int i = 0; i < pc_current_node->vecGetChildren().size(); i++) {
+		Node *pc_child_node = pc_current_node->pcGetChild(i);
+		if (pc_child_node != NULL) s_out += toStringAux(pc_child_node);
 	}
 	return s_out;
 }
 
 std::string Tree::sToString() {
-	return toStringAux(pc_root, 0);
+	return toStringAux(pc_root);
 }
-
-void vTraverseAddVariables(std::set<std::string> &set_variables, Node* pc_current_node) {
-	if (pc_current_node->eGetTokenType() == VARIABLE) {
-		set_variables.insert(pc_current_node->sGetTokensLexeme());
-	}
-	for (int i = 0; i < pc_current_node->vGetChildren().size(); i++) {
-		if (pc_current_node->vGetChildren()[i] != NULL) {
-			vTraverseAddVariables(set_variables, pc_current_node->vGetChildren()[i]);
-		}
-	}
-}
-
-std::vector<std::string> Tree::vecGetVariables() {
-	std::set<std::string> set_variables;
-	vTraverseAddVariables(set_variables, this->pc_root);
-	return std::vector<std::string>(set_variables.begin(), set_variables.end());
-}
-
-

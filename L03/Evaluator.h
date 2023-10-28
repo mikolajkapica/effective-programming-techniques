@@ -7,6 +7,6 @@ class Tree;
 
 class Evaluator {
 public:
-	double dEvaluate(Tree *tree, std::map<std::string, int> map_vars);
+	double dEvaluateTree(Tree *tree, std::map<std::string, double> map_vars);
 };
 
