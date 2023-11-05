@@ -45,7 +45,7 @@ CNumber::CNumber(const CNumber& pc_other) {
 	std::copy(pc_other.pi_table, pc_other.pi_table + pc_other.i_length, this->pi_table);
 }
 
-CNumber::CNumber(const int i_val) {
+CNumber::CNumber(int i_val) {
 	CNumber pc_res;
 	int i_partition_digit = 10;
 	int i_sign = i_val < 0 ? -1 : 1;
@@ -381,6 +381,7 @@ CNumber CNumber::abs() {
 		return -(*this);
 	}
 }
+
 
 std::string CNumber::toString() {
 	if (this->sgn() == -1) {
