@@ -96,7 +96,7 @@ int main() {
 		testSubtraction(125, -125, 250),
 		testSubtraction(125, -634, 759),
 		testSubtraction(125, 634, -509),
-		testSubtraction(12222235, 23562362367, -2075303652),
+		testSubtraction(12335, 2365, 9970),
 
 		testDivision(253, -235, -1),
 		testDivision(0, -634, 0),

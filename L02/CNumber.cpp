@@ -1,13 +1,5 @@
 #include "CNumber.h"
-#include <iostream>
 #include <string>
-
-void print_table(int* pi_table, int i_length) {
-	for (int i = 0; i < i_length; i++) {
-		std::cout << pi_table[i] << " ";
-	}
-	std::cout << std::endl;
-}
 
 CNumber CNumber::cGetWithoutSign(CNumber& c_number) {
 	CNumber c_result = c_number;
@@ -17,25 +9,6 @@ CNumber CNumber::cGetWithoutSign(CNumber& c_number) {
 	c_result.pi_table = new int[c_result.i_length];
 	std::copy(pi_old_table + 1, pi_old_table + c_number.i_length, c_result.pi_table);
 	return c_result;
-}
-
-CNumber intToCNumber(int i_val) {
-	int i_base = 10;
-	int i_sign = i_val < 0 ? -1 : 1;
-	int i_val_abs = i_sign * i_val;
-	int i_length = 1; // 1 for the i_sign
-	while (i_val_abs > 0) {
-		i_val_abs /= i_base;
-		i_length++;
-	}
-	int* pi_table = new int[i_length];
-	i_val_abs = i_sign * i_val;
-	for (int i = i_length - 1; i >= 0; i--) {
-		pi_table[i] = i_val_abs % i_base;
-		i_val_abs /= i_base;
-	}
-	if (i_sign == -1) return -CNumber(i_length, pi_table);
-	return CNumber(i_length, pi_table);
 }
 
 void clearRedundantPrefix(int* &pi_table, int& i_length) {	
@@ -62,17 +35,6 @@ void clearRedundantPrefix(int* &pi_table, int& i_length) {
 }
 
 CNumber::CNumber(int i_length, int* pi_table) {
-	if (i_length == 1) {
-		if (pi_table[0] == 0 || pi_table[0] == I_BASE - 1) {
-			this->i_length = 2;
-			this->pi_table = new int[2];
-			this->pi_table[0] = 0;
-			this->pi_table[1] = 0;
-			return;
-		}
-		std::cout << "here!" << std::endl;
-		throw "Invalid number";
-	}
 	this->i_length = i_length;
 	this->pi_table = pi_table;
 }
@@ -83,8 +45,25 @@ CNumber::CNumber(const CNumber& pc_other) {
 	std::copy(pc_other.pi_table, pc_other.pi_table + pc_other.i_length, this->pi_table);
 }
 
-CNumber::CNumber(int i_val) {
-	CNumber pc_res = intToCNumber(i_val);
+CNumber::CNumber(const int i_val) {
+	CNumber pc_res;
+	int i_partition_digit = 10;
+	int i_sign = i_val < 0 ? -1 : 1;
+	int i_val_abs = i_sign * i_val;
+	int i_length = 1; // 1 for the i_sign
+	while (i_val_abs > 0) {
+		i_val_abs /= i_partition_digit;
+		i_length++;
+	}
+	if (i_val == 0) i_length = 2;
+	int* pi_table = new int[i_length];
+	i_val_abs = i_sign * i_val;
+	for (int i = i_length - 1; i >= 0; i--) {
+		pi_table[i] = i_val_abs % i_partition_digit;
+		i_val_abs /= i_partition_digit;
+	}
+	if (i_sign == -1) pc_res = -CNumber(i_length, pi_table);
+	else pc_res = CNumber(i_length, pi_table);
 	this->i_length = pc_res.i_length;
 	this->pi_table = new int[pc_res.i_length];
 	std::copy(pc_res.pi_table, pc_res.pi_table + pc_res.i_length, this->pi_table);
@@ -100,12 +79,8 @@ void CNumber::operator=(const CNumber& pc_other) {
 }
 
 void CNumber::operator=(const int i_val) { 
-	*this = intToCNumber(i_val);
-}
-
-void CNumber::operator=(const long i_val)
-{
-	*this = intToCNumber(i_val);
+	CNumber c_val = i_val;
+	*this = c_val;
 }
 
 CNumber CNumber::operator+(CNumber& pc_new_val) {
@@ -203,8 +178,7 @@ CNumber CNumber::operator/(CNumber& pc_new_val) {
 	int i_length_b = c_b.i_length;
 
 	if (i_length_a < i_length_b || c_a < c_b) {
-		CNumber a;
-		a = 0;
+		CNumber a = 0;
 		return a;
 	}
 
@@ -212,7 +186,6 @@ CNumber CNumber::operator/(CNumber& pc_new_val) {
 	int i_first_digit_a = c_a.pi_table[1];
 	int i_first_digit_b = c_b.pi_table[1];	
 
-	bool b_was_smaller;
 	bool b_first_iteration = true;
 
 	// make result table
@@ -260,20 +233,32 @@ CNumber CNumber::operator/(CNumber& pc_new_val) {
 	return CNumber(i_table_result_length, pi_table_result);
 }
 
+CNumber CNumber::operator+=(CNumber& pc_other) {
+	return *this + pc_other;
+}
+
 CNumber CNumber::operator+(int i_new_val) {
-	return *this + intToCNumber(i_new_val);
+	CNumber c_new_val = i_new_val;
+	return *this + c_new_val;
 }
 
 CNumber CNumber::operator*(int i_new_val) {
-	return *this * intToCNumber(i_new_val);
+	CNumber c_new_val = i_new_val;
+	return *this * c_new_val;
 }
 
 CNumber CNumber::operator-(int i_new_val) {
-	return *this + intToCNumber(-i_new_val);
+	CNumber c_new_val = -i_new_val;
+	return *this + c_new_val;
 }
 
 CNumber CNumber::operator/(int i_new_val) {
-	return *this / intToCNumber(i_new_val);
+	CNumber c_new_val = i_new_val;
+	return *this / c_new_val;
+}
+
+CNumber CNumber::operator+=(int i_val) {
+	return *this + i_val;
 }
 
 CNumber CNumber::operator-() {
@@ -305,12 +290,21 @@ CNumber CNumber::operator+() {
 	return *this;
 }
 
-CNumber CNumber::operator+=(CNumber& pc_other) {
-	return *this + pc_other;
-}
-
-CNumber CNumber::operator+=(int i_val) {
-	return *this + i_val;
+bool CNumber::operator==(CNumber& pc_other) {
+	int i_sign_a = this->sgn();
+	int i_sign_b = pc_other.sgn();
+	if (i_sign_a != i_sign_b) {
+		return false;
+	}
+	if (this->i_length != pc_other.i_length) {
+		return false;
+	}
+	for (int i = 1; i < this->i_length; i++) {
+		if (this->pi_table[i] != pc_other.pi_table[i]) {
+			return false;
+		}
+	}
+	return true;
 }
 
 bool CNumber::operator<(CNumber& pc_other) {
@@ -342,87 +336,30 @@ bool CNumber::operator>=(CNumber& pc_other) {
 	return *this > pc_other || *this == pc_other;
 }
 
-bool CNumber::operator==(CNumber& pc_other) {
-	int i_sign_a = this->sgn();
-	int i_sign_b = pc_other.sgn();
-	if (i_sign_a != i_sign_b) {
-		return false;
-	}
-	if (this->i_length != pc_other.i_length) {
-		return false;
-	}
-	for (int i = 1; i < this->i_length; i++) {
-		if (this->pi_table[i] != pc_other.pi_table[i]) {
-			return false;
-		}
-	}
-	return true;
+bool CNumber::operator==(int i_val) {
+	CNumber c_val = i_val;
+	return *this == c_val;
 }
 
 bool CNumber::operator<(int i_val) {
-	int i_sign_a = this->sgn();
-	if (i_val == 0) {
-		return (i_sign_a < 0);
-	}
-	int i_sign_b = i_val < 0 ? -1 : 1;
-	if (i_sign_a != i_sign_b) {
-		return i_sign_a < i_sign_b;
-	}
-
-	return *this < intToCNumber(i_val);
+	CNumber c_val = i_val;
+	return *this < c_val;
 }
 
 bool CNumber::operator<=(int i_val) {
-	int i_sign_a = this->sgn();
-	if (i_val == 0) {
-		return (i_sign_a <= 0);
-	}
-	int i_sign_b = i_val < 0 ? -1 : 1;
-	if (i_sign_a != i_sign_b) {
-		return i_sign_a < i_sign_b;
-	}
-
-	return *this <= intToCNumber(i_val);
+	CNumber c_val = i_val;
+	return *this <= c_val;
 }
 
 bool CNumber::operator>(int i_val) {
-	int i_sign_a = this->sgn();
-	if (i_val == 0) {
-		return (i_sign_a > 0);
-	}
-	int i_sign_b = i_val < 0 ? -1 : 1;
-	if (i_sign_a != i_sign_b) {
-		return i_sign_a > i_sign_b;
-	}
-
-	return *this > intToCNumber(i_val);
+	CNumber c_val = i_val;
+	return *this > c_val;
 }
 
 bool CNumber::operator>=(int i_val) {
-	int i_sign_a = this->sgn();
-	if (i_val == 0) {
-		return (i_sign_a >= 0);
-	}
-	int i_sign_b = i_val < 0 ? -1 : 1;
-	if (i_sign_a != i_sign_b) {
-		return i_sign_a > i_sign_b;
-	}
-
-	return *this >= intToCNumber(i_val);
+	CNumber c_val = i_val;
+	return *this >= c_val;
 }
-
-bool CNumber::operator==(int i_val) {
-	int i_sign_a = this->sgn();
-	if (i_val == 0) {
-		return (i_sign_a == 0);
-	}
-	int i_sign_b = i_val < 0 ? -1 : 1;
-	if (i_sign_a != i_sign_b) {
-		return false;
-	}
-	return *this == intToCNumber(i_val);
-}
-
 
 int CNumber::sgn() {
 	if (this->pi_table[0] == I_BASE - 1) { // 9
@@ -431,17 +368,18 @@ int CNumber::sgn() {
 		return 0;
 	} else if (this->pi_table[0] == 0) { // 0 1
 		return 1;
-	} 
-	return -325235; // XD
-
-	//else { 
-	//	std::cout << "Invalid number" << this->pi_table[0] << std::endl;
-	//	throw "Invalid number";
-	//}
+	} else { 
+		throw "Invalid number (sign digit has to be 0 or " + std::to_string(I_BASE - 1) + "), it was " + std::to_string(this->pi_table[0]);
+	}
 }
 
 CNumber CNumber::abs() {
-	return  (*this) * this->sgn();
+	int i_sign = this->sgn();
+	if (i_sign == 0 || i_sign == 1) {
+		return *this;
+	} else {
+		return -(*this);
+	}
 }
 
 std::string CNumber::toString() {
