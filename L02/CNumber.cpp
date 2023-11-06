@@ -1,4 +1,5 @@
 #include "CNumber.h"
+#include <iostream>
 #include <string>
 
 CNumber CNumber::cGetWithoutSign(CNumber& c_number) {
@@ -84,6 +85,9 @@ void CNumber::operator=(const int i_val) {
 }
 
 CNumber CNumber::operator+(CNumber& pc_new_val) {
+	if (&pc_new_val == NULL) {
+		throw "Adding NULL";
+	}
 	int i_length_a = this->i_length;
 	int i_length_b = pc_new_val.i_length;
 	int i_first_digit_a = this->pi_table[0];
@@ -111,6 +115,9 @@ CNumber CNumber::operator+(CNumber& pc_new_val) {
 }
 
 CNumber CNumber::operator*(CNumber& pc_new_val) {
+	if (&pc_new_val == NULL) {
+		throw "Multiplying by NULL";
+	}
 	int i_length_a = this->i_length;
 	int i_length_b = pc_new_val.i_length;
 
@@ -145,14 +152,20 @@ CNumber CNumber::operator*(CNumber& pc_new_val) {
 }
 
 CNumber CNumber::operator-(CNumber& pc_new_val) {
+	if (&pc_new_val == NULL) {
+		throw "Subtracting NULL";
+	}
 	return *this + (-pc_new_val);
 }
 
-CNumber CNumber::operator/(CNumber& pc_new_val) {
+std::pair<CNumber, CNumber> CNumber::pDiv(CNumber& pc_new_val) {
 	if ((*this) == 0) {
 		CNumber a;
 		a = 0;
-		return a;
+		return std::pair<CNumber, CNumber>(a, a);
+	}
+	if (pc_new_val == 0) {
+		throw "Division by zero";
 	}
 	int i_sign_a = this->sgn();
 	int i_sign_b = pc_new_val.sgn();
@@ -160,13 +173,15 @@ CNumber CNumber::operator/(CNumber& pc_new_val) {
 	// normalize to positive integers
 	if (i_sign_a * i_sign_b == 1) {
 		if (i_sign_a == -1) {
-			return (-(*this)) / (-pc_new_val);
+			return (-(*this)).pDiv(-pc_new_val);
 		}
 	} else {
 		if (i_sign_a == -1) {
-			return -((-(*this)) / pc_new_val);
+			std::pair<CNumber, CNumber> p_results = ((-(*this)).pDiv(pc_new_val));
+			return std::pair<CNumber, CNumber>(-p_results.first, p_results.second);
 		} else {
-			return -((*this) / (-pc_new_val));
+			std::pair<CNumber, CNumber> p_results = ((*this).pDiv(-pc_new_val));
+			return std::pair<CNumber, CNumber>(-p_results.first, p_results.second);
 		}
 	}
 
@@ -179,7 +194,7 @@ CNumber CNumber::operator/(CNumber& pc_new_val) {
 
 	if (i_length_a < i_length_b || c_a < c_b) {
 		CNumber a = 0;
-		return a;
+		return std::pair<CNumber, CNumber>(a, a);
 	}
 
 	// find first digit of a and b
@@ -227,10 +242,17 @@ CNumber CNumber::operator/(CNumber& pc_new_val) {
 		}
 	}
 
-
 	clearRedundantPrefix(pi_table_result, i_table_result_length);
 
-	return CNumber(i_table_result_length, pi_table_result);
+	return std::pair<CNumber, CNumber>(CNumber(i_table_result_length, pi_table_result), c_current_operations);
+}
+
+
+CNumber CNumber::operator/(CNumber& pc_new_val) {
+	if (&pc_new_val == NULL) {
+		throw "Dividing by NULL";
+	}
+	return this->pDiv(pc_new_val).first;
 }
 
 CNumber CNumber::operator+=(CNumber& pc_other) {
@@ -399,4 +421,10 @@ std::string CNumber::toString() {
 		out = "0";
 	}
 	return out; 
+}
+
+CNumber CNumber::cMod(CNumber& pc_other, CNumber** pcRes) {
+	*pcRes = new CNumber();
+	**pcRes = this->pDiv(pc_other).first;
+	return this->pDiv(pc_other).second;
 }

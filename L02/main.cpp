@@ -163,4 +163,13 @@ void vBinaryTests() {
 int main() {
 	vDecimalTest();
 	//vBinaryTests();
+
+	CNumber cVal0, cVal1, cMod, *pcDiv = NULL;
+	cVal0 = 21;
+	cVal1 = 4;
+	cMod = cVal0.cMod(cVal1, &pcDiv);
+	std::cout << cVal0.toString() << " / " << cVal1.toString() << " = ";
+	std::cout << (*pcDiv).toString()  << " rest: " << cMod.toString() << std::endl;
+	//cVal0 / cVal1;
+	 //1 =  21         4       5
 }

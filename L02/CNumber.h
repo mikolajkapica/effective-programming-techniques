@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
+#include <utility>
 
 const int I_BASE = 10;
 const int I_NUMBER_DEFAULT_LENGTH = 1;
+
 
 class CNumber {
 public:
@@ -52,6 +54,9 @@ public:
 	CNumber abs();
 	CNumber cGetWithoutSign(CNumber& pc_other);
 	std::string toString();
+
+	std::pair<CNumber, CNumber> pDiv(CNumber& pc_other);
+	CNumber cMod(CNumber& pc_other, CNumber** pcRes);
 
 private:
 	int* pi_table;
