@@ -17,7 +17,7 @@ Node::~Node() {
 	} 
 }
 
-std::string Node::sGetTokensLexeme() {
+std::string Node::sGetTokenLexeme() {
 	return this->pc_token->sGetLexeme();
 }
 
@@ -28,5 +28,12 @@ E_TOKEN_TYPE Node::eGetTokenType() {
 void Node::vSetChild(int i_index, Node* node) {
 	this->vec_children[i_index] = node;
 	this->i_empty_children_count--;
-	this->pc_parent = this;
+	this->i_children_count++;
+	node->pc_parent = this;
+}
+
+std::string Node::sToString() {
+	std::string s_parent = this->pc_parent == NULL ? "NULL" : this->pc_parent->sGetTokenLexeme();
+	std::string s_token_info = this->pcGetToken()->sToString();
+	return "Node " + s_token_info.substr(7, s_token_info.length() - 1) + " Parent=[" + s_parent + "]\n";
 }

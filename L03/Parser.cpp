@@ -1,5 +1,6 @@
 #include <iostream>
 #include <set>
+#include <utility>
 
 #include "Parser.h"
 #include "Tree.h"
@@ -44,7 +45,6 @@ bool isNumber(std::string t) {
 	return true;
 }
 
-
 E_TOKEN_TYPE type(std::string& t) {
 	if (t == "+" || t == "-" ||
 		t == "*" || t == "/" ||
@@ -65,13 +65,13 @@ int getNumberOfArguments(std::string& t) {
 	else return 0;
 }	
 
-std::pair<std::vector<Token*>, E_ERROR_TYPE> Parser::vecTokenize() {
+std::pair<std::vector<Token*>, E_ERROR_TYPE> Parser::vecTokenize(std::string s_input) {
 	std::vector<Token*> v_tokens;
 	int i_start_word;
-	for (int i = 0; i < this->s_input.length(); i++) {
-		if (this->s_input[i] != ' ') {
+	for (int i = 0; i < s_input.length(); i++) {
+		if (s_input[i] != ' ') {
 			i_start_word = i;
-			while (i < this->s_input.length() && this->s_input[i] != ' ') i++;
+			while (i < s_input.length() && s_input[i] != ' ') i++;
 			std::string s_lexeme = s_input.substr(i_start_word, i - i_start_word);
 			E_TOKEN_TYPE e_type = type(s_lexeme);
 			if (e_type == E_TOKEN_TYPE::UNKNOWN) {
@@ -95,21 +95,35 @@ void vCorrectTree(Node* current_node, Node *parent, int i_child_number) {
 	}
 }
 
-Tree *Parser::pcParse(std::vector<Token*> vec_tokens) {
+std::pair<Tree *, E_ERROR_TYPE> Parser::pcParse(std::vector<Token*> vec_tokens) {
+
 	Tree *tree = new Tree();
 	std::set<std::string> set_variables;
+
 	for (int i = 0; i < vec_tokens.size(); i++) {
-		if (vec_tokens[i]->cGetTokenType() == E_TOKEN_TYPE::VARIABLE) {
-			set_variables.insert(vec_tokens[i]->sGetLexeme());
+		Token *t_current = vec_tokens[i];
+
+		// ADD VARIABLES TO SET
+		if (t_current->cGetTokenType() == E_TOKEN_TYPE::VARIABLE) {
+			set_variables.insert(t_current->sGetLexeme());
 		}
-		E_ERROR_TYPE e_err = tree->pcInsert(vec_tokens[i]);
+
+		// INSERT TOKEN INTO TREE
+		E_ERROR_TYPE e_err = tree->pcInsert(t_current);
+
+		// IF ERROR OCCURED
 		if (e_err != E_ERROR_TYPE::NO_ERROR) {
-			return NULL;
+			return std::make_pair(tree, e_err);
 		}
 	}
+
+	// UPDATE TREE WITH MISSING NODES (1)
 	vCorrectTree(tree->pcGetRoot(), NULL, 0);
+
+	// CHANGE SET TO VECTOR AND ASSIGN IT TO this->vec_variables
 	this->vec_variables = std::vector<std::string>(set_variables.begin(), set_variables.end());
-	return tree;
+
+	return std::make_pair(tree, E_ERROR_TYPE::NO_ERROR);
 }
 
 

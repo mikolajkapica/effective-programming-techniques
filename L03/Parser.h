@@ -10,9 +10,8 @@ class Node;
 
 class Parser {
 public:
-	Parser(std::string s_input) : s_input(s_input) {}
-	std::pair<std::vector<Token*>, E_ERROR_TYPE> vecTokenize();
-	Tree *pcParse(std::vector<Token*> vec_tokens);
+	std::pair<std::vector<Token*>, E_ERROR_TYPE> vecTokenize(std::string s_input);
+	std::pair<Tree *, E_ERROR_TYPE> pcParse(std::vector<Token*> vec_tokens);
 
 	std::vector<std::string> vecGetVariables() { return vec_variables; }
 private:

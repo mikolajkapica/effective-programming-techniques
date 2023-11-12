@@ -7,7 +7,7 @@
 #include <iostream>
 
 double dOperatorDispatcher(Node* node, std::vector<double> arguments) {
-	std::string lexeme = node->sGetTokensLexeme();
+	std::string lexeme = node->sGetTokenLexeme();
 	if (arguments.size() == 2) {
 		if (lexeme == "+") return arguments[0] + arguments[1];
 		if (lexeme == "-") return arguments[0] - arguments[1];
@@ -20,17 +20,19 @@ double dOperatorDispatcher(Node* node, std::vector<double> arguments) {
 }
 
 double dEvaluateHelper(Node* pc_current_node, std::map<std::string, double> map_vars) {
+		std::vector<double> arguments;
 		switch (pc_current_node->eGetTokenType()) {
 		case E_TOKEN_TYPE::NUMBER:
-			return std::stod(pc_current_node->sGetTokensLexeme());
+			return std::stod(pc_current_node->sGetTokenLexeme());
 		case E_TOKEN_TYPE::VARIABLE:
-			return map_vars[pc_current_node->sGetTokensLexeme()];
+			return map_vars[pc_current_node->sGetTokenLexeme()];
 		case E_TOKEN_TYPE::OPERATOR:
-			std::vector<double> arguments;
 			for (int i = 0; i < pc_current_node->vecGetChildren().size(); i++) {
 				arguments.push_back(dEvaluateHelper(pc_current_node->pcGetChild(i), map_vars));
 			}
 			return dOperatorDispatcher(pc_current_node, arguments);
+		case E_TOKEN_TYPE::UNKNOWN:
+			throw std::exception("Unknown token type");
 	}
 }
 

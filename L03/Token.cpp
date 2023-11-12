@@ -8,5 +8,5 @@ std::string Token::sToString() {
 		case E_TOKEN_TYPE::NUMBER: s_type = "NUMBER"; break;
 		case E_TOKEN_TYPE::VARIABLE: s_type = "VARIABLE"; break;
 	}
-	return "Token: [" + this->s_lexeme + "] [" + s_type + "]\n";
+	return "Token: [" + this->s_lexeme + "] [" + s_type + "]";
 }

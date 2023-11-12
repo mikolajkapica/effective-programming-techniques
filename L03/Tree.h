@@ -15,7 +15,8 @@ public:
     E_ERROR_TYPE pcInsert(Token* token);
     Node *pcGetRoot() { return pc_root; }
     std::string sToString();
+    void operator += (Tree *tree);
 private:
-    E_ERROR_TYPE pcInsertAux(Token* token, Node* pc_current_node);
+    E_ERROR_TYPE pcInsertAux(Node* node, Node* pc_current_node);
     Node* pc_root;
 };  
