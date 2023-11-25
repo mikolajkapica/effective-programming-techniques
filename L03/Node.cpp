@@ -35,5 +35,6 @@ void Node::vSetChild(int i_index, Node* node) {
 std::string Node::sToString() {
 	std::string s_parent = this->pc_parent == NULL ? "NULL" : this->pc_parent->sGetTokenLexeme();
 	std::string s_token_info = this->pcGetToken()->sToString();
-	return "Node " + s_token_info.substr(7, s_token_info.length() - 1) + " Parent=[" + s_parent + "]\n";
+	const int i_prefix_length = 7;
+	return "Node " + s_token_info.substr(i_prefix_length, s_token_info.length() - 1) + " Parent=[" + s_parent + "]\n";
 }

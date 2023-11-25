@@ -23,9 +23,9 @@ void vCopyAux(Node* pc_current_node, Node* pc_other) {
 	}
 }
 
-Tree::Tree(Tree *pc_tree) {
-	this->pc_root = new Node(pc_tree->pcGetRoot()->pcGetToken());
-	vCopyAux(this->pc_root, pc_tree->pcGetRoot());
+Tree::Tree(const Tree *pc_tree) {
+	this->pc_root = new Node(pc_tree->pc_root->pcGetToken());
+	vCopyAux(this->pc_root, pc_tree->pc_root);
 }
 
 

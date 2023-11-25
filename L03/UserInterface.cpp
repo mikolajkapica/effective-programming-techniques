@@ -12,8 +12,23 @@
 #include "Node.h"
 #include "VariablesUtitlities.h"
 
+bool bCheckIfPlusesHaveRightArguments(std::vector<Token*> vec_tokens) {
+	for (int i = 0; i < vec_tokens.size(); i++) {
+		if (vec_tokens[i]->cGetTokenType() == E_TOKEN_TYPE::OPERATOR && vec_tokens[i]->sGetLexeme() == "+") {
+			if (i + 2 > vec_tokens.size() - 1) return false;
+			if (vec_tokens[i + 1]->cGetTokenType() != E_TOKEN_TYPE::VARIABLE) return false;
+			if (vec_tokens[i + 2]->cGetTokenType() != E_TOKEN_TYPE::OPERATOR) return false;
+		}
+	}
+	return true;
+}
+
 std::pair<std::pair<Tree*, std::vector<std::string>>, E_ERROR_TYPE> enter(Parser* parser, std::string s_input, std::string& s_out) {
 	std::pair<std::vector<Token*>, E_ERROR_TYPE> tokens = (*parser).vecTokenize(s_input, s_out);
+	bool b_plus_check = bCheckIfPlusesHaveRightArguments(tokens.first);
+	if (!b_plus_check) {
+		return std::make_pair(std::make_pair(new Tree(), std::vector<std::string>()), E_ERROR_TYPE::MODIFICATION_ERROR);
+	}
 	if (tokens.second == E_ERROR_TYPE::INVALID_TOKEN) {
 		return std::make_pair(std::make_pair(new Tree(), std::vector<std::string>()), E_ERROR_TYPE::INVALID_TOKEN);
 	} else {
@@ -24,6 +39,12 @@ std::pair<std::pair<Tree*, std::vector<std::string>>, E_ERROR_TYPE> enter(Parser
 
 std::string UserInterface::run(Tree*& pc_tree, std::vector<std::string>& vec_vars, Parser*& parser, bool &b_run) {
 	std::string s_out;
+	const std::string s_enter = "enter";
+	const std::string s_vars = "vars";
+	const std::string s_print = "print";
+	const std::string s_comp = "comp";
+	const std::string s_join = "join";
+	const std::string s_exit = "exit";
 
 	// Get user input
 	std::string s_user_input;
@@ -33,9 +54,15 @@ std::string UserInterface::run(Tree*& pc_tree, std::vector<std::string>& vec_var
 	if (s_action == s_input) s_input = "";
 
 	// ENTER
-	if (s_action == "enter" && s_input != "") {
+	if (s_action == s_enter && s_input != "") {
+		if (pc_tree != NULL) {
+			delete pc_tree;
+			pc_tree = NULL;
+		}
 		std::pair<std::pair<Tree*, std::vector<std::string>>, E_ERROR_TYPE> pair_enter_result = enter(parser, s_input, s_out);
-		if (pair_enter_result.second == E_ERROR_TYPE::INVALID_TOKEN) {
+		if (pair_enter_result.second == E_ERROR_TYPE::MODIFICATION_ERROR) {
+			s_out += "Plus has to have a variable and a operator as its arguments\n";
+		} else if (pair_enter_result.second == E_ERROR_TYPE::INVALID_TOKEN) {
 			s_out += "Invalid expression\n";
 		} else {
 			if (pair_enter_result.second == E_ERROR_TYPE::PARSING_PROBLEM) {
@@ -51,7 +78,7 @@ std::string UserInterface::run(Tree*& pc_tree, std::vector<std::string>& vec_var
 	}
 
 	// VARS
-	else if (s_action == "vars") {
+	else if (s_action == s_vars) {
 		if (pc_tree == NULL) {
 			s_out += "No tree entered\n";
 		} else if (vec_vars.size() == 0) {
@@ -61,12 +88,11 @@ std::string UserInterface::run(Tree*& pc_tree, std::vector<std::string>& vec_var
 			for (int i = 0; i < vec_vars.size(); i++) {
 				s_out += " " + vec_vars[i];
 			}
-			s_out += "\n";
 		}
 	}
 
 	// PRINT
-	else if (s_action == "print") {
+	else if (s_action == s_print) {
 		if (pc_tree == NULL) {
 			s_out += "No tree entered\n";
 		} else {
@@ -75,7 +101,7 @@ std::string UserInterface::run(Tree*& pc_tree, std::vector<std::string>& vec_var
 	}
 
 	// COMP
-	else if (s_action == "comp") {
+	else if (s_action == s_comp) {
 		if (pc_tree == NULL) {
 			s_out += "No tree entered\n";
 		} else {
@@ -85,13 +111,13 @@ std::string UserInterface::run(Tree*& pc_tree, std::vector<std::string>& vec_var
 			} else if (map_values.second == E_ERROR_TYPE::INVALID_VALUE) {
 				s_out += "Invalid value\n";
 			} else {
-				s_out += "Result: " + std::to_string(Evaluator().dEvaluateTree(pc_tree, map_values.first)) + "\n";
+				s_out += "Result: " + std::to_string(Evaluator().dEvaluateTree(pc_tree, map_values.first));
 			}
 		}
 	}
 
 	// JOIN
-	else if (s_action=="join" && s_input != "") {
+	else if (s_action==s_join && s_input != "") {
 		if (pc_tree == NULL) {
 			s_out = "No tree entered\n";
 		} else {
@@ -106,16 +132,20 @@ std::string UserInterface::run(Tree*& pc_tree, std::vector<std::string>& vec_var
 				pc_tree_to_add = pair_enter_result.first.first;
 				vec_vars_to_add = pair_enter_result.first.second;
 				// JOIN THIS TREE WITH THE OTHER TREE (RIGHTMOST LEAF)
-				*pc_tree = *pc_tree + pc_tree_to_add;
+				Tree* pc_joined = *pc_tree + pc_tree_to_add;
+				*pc_tree = *pc_joined;
 				vec_vars = pc_tree->vecGetVariables();
+				s_out += pc_tree->sToString();
 			}
 		}
 	}
 
 	// EXIT
-	else if (s_user_input.substr(0, 4) == "exit") {
+	else if (s_action==s_exit) {
 		s_out = "Exiting...\n";
 		b_run = false;
+		delete pc_tree;
+		delete parser;
 	}
 
 	// INVALID

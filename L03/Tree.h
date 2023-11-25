@@ -12,7 +12,7 @@ class Tree {
 public:
     Tree() : pc_root(NULL) {}
     ~Tree();
-    Tree(Tree *tree);
+    Tree(const Tree *tree);
     E_ERROR_TYPE pcInsert(Token* token);
     Node *pcGetRoot() { return pc_root; }
     std::string sToString();
