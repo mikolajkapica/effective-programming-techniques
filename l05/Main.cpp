@@ -5,9 +5,21 @@
 
 int main()
 {
-	CMySmartPointer<int> pc_pointer = new int(5);
+	CMySmartPointer pc_pointer = new int(5);
 	std::cout << pc_pointer.iGetCounter() << std::endl;
-	CMySmartPointer<int> pc_pointer2 = pc_pointer;
+	CMySmartPointer pc_pointer2 = pc_pointer;
+	std::cout << pc_pointer.iGetCounter() << std::endl;
+	CMySmartPointer pc_pointer3 = pc_pointer;
+	std::cout << pc_pointer.iGetCounter() << std::endl;
+	CMySmartPointer pc_pointer4 = pc_pointer;
+	std::cout << pc_pointer.iGetCounter() << std::endl;
+
+	CMySmartPointer<int> pc_pointer5;
+	pc_pointer5 = pc_pointer.cDuplicate();
+	std::cout << "pc_pointer5 = " << *pc_pointer5 << std::endl;
+	std::cout << "pc_pointer5 counter = " << pc_pointer.iGetCounter() << std::endl;
+	std::cout << std::endl;
+
 
 	std::cout << *pc_pointer << std::endl;
 	std::cout << pc_pointer.iGetCounter() << std::endl;
@@ -20,21 +32,23 @@ int main()
 	std::cout << *pc_pointer << std::endl;
 	std::cout << *pc_pointer2 << std::endl;
 
-	Tree<int> tree;
-	std::cout << "tree.toString() = " << tree.toString() << std::endl;
+	Tree<int> tree1 = Tree<int>();
+	MyError e1 = tree1.pcInsert(new Node<int>(new Token<int>(ETokenType::OPERATOR, NULL, "+", 2)));
+	MyError e2 = tree1.pcInsert(new Node<int>(new Token<int>(ETokenType::CONSTANT, 5, "5")));
+	MyError e3 = tree1.pcInsert(new Node<int>(new Token<int>(ETokenType::CONSTANT, 3, "3")));
 
-	Tree<int> tree2;
+	Tree<int> tree2 = Tree<int>();
+	MyError e4 = tree2.pcInsert(new Node<int>(new Token<int>(ETokenType::OPERATOR, NULL, "*", 2)));
+	MyError e5 = tree2.pcInsert(new Node<int>(new Token<int>(ETokenType::CONSTANT, 8, "8")));
+	MyError e6 = tree2.pcInsert(new Node<int>(new Token<int>(ETokenType::CONSTANT, 2, "2")));
 
-	MyError e1 = tree.pcInsert(new Node<int>(new Token<int>(ETokenType::OPERATOR, NULL, "+", 2)));
-	MyError e2 = tree.pcInsert(new Node<int>(new Token<int>(ETokenType::CONSTANT, 5, "5")));
-	MyError e3 = tree.pcInsert(new Node<int>(new Token<int>(ETokenType::CONSTANT, 3, "3")));
-	std::cout << std::endl;
-	std::cout << "Added nodes" << std::endl;
-	std::cout << "tree.toString() = " << tree.toString() << std::endl;
-
-	tree2 = std::move(tree);
-	std::cout << std::endl;
-	std::cout << "Moved tree to tree2" << std::endl;
+	std::cout << "tree1.toString() = " << tree1.toString() << std::endl;
 	std::cout << "tree2.toString() = " << tree2.toString() << std::endl;
-	std::cout << "tree.toString() = " << tree.toString() << std::endl;
+	std::cout << std::endl;
+
+	tree1 = std::move(tree2);
+
+	std::cout << "Moved tree3 to tree1" << std::endl;
+	std::cout << "tree1.toString() = " << tree1.toString() << std::endl;
+	std::cout << "tree2.toString() = " << tree2.toString() << std::endl;
 }//int main()

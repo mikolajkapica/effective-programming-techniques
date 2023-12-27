@@ -15,6 +15,11 @@ template <typename T>
 class CMySmartPointer
 {
 public:
+	CMySmartPointer() {
+		pc_pointer = NULL;
+		pc_counter = new CRefCounter();
+		pc_counter->iAdd();
+	}//CMySmartPointer()
 	CMySmartPointer(T* pcPointer)
 	{
 		pc_pointer = pcPointer;
@@ -49,6 +54,9 @@ public:
 		pc_counter->iAdd();
 	}//void operator=(const CMySmartPointer &pcOther)
 	int iGetCounter() { return(pc_counter->iGet()); }
+	CMySmartPointer cDuplicate() {
+		return CMySmartPointer(*this);
+	}
 private:
 	CRefCounter* pc_counter;
 	T* pc_pointer;

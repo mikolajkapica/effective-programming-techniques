@@ -15,6 +15,12 @@ private:
 	std::vector<Node*> vec_children;
 public:
 	Node(Token<T>* token);
+	Node(Node<T>&& pc_other) {
+		pc_token = pc_other->pc_token;
+		pc_parent = pc_other->pc_parent;
+		vec_children = pc_other->vec_children;
+		pc_other = NULL;
+	}
 	~Node();
 	inline std::vector<Node*> vecGetChildren() { return this->vec_children; };
 	inline Node* pcGetNthChild(int n) { return this->vec_children[n]; };
@@ -32,6 +38,17 @@ Node<T>::Node(Token<T>* token) : pc_token(token) {
 	for (int i = 0; i < token->iGetArgumentsQuantity(); i++) {
 		this->vec_children.push_back(NULL);
 	}
+}
+
+template<typename T>
+Node<T> copyNodeAux(Node<T>& pc_parent, Node<T>& pc_other) {
+	Node<T> pc_node;
+	pc_node.pc_token = new Token<T>(pc_other.pc_token);
+	pc_node.pc_parent = &pc_parent;
+	for (int i = 0; i < pc_other.vec_children.size(); i++) {
+		pc_node.vec_children.push_back(copyNodeAux(pc_node, pc_other.vec_children[i]));
+	}
+	return pc_node;
 }
 
 template <typename T>
@@ -60,7 +77,11 @@ class Tree {
 private:
 	Node<T>* pc_root;
 public:
-	Tree() : pc_root(NULL) {}
+	Tree() : pc_root(NULL) {};
+	Tree(Tree<T>&& pc_other) noexcept {
+		this->pc_root = pc_other.pc_root;
+		pc_other.pc_root = NULL;
+	};
 	~Tree();
 	Node<T>* pcGetRoot() { return this->pc_root; };
 	MyError pcInsert(Node<T>* pc_node);
@@ -114,15 +135,6 @@ MyError Tree<T>::pcInsert(Node<T>* pc_node) {
 	return pcInsertAux<T>(pc_node, this->pc_root);
 }
 
-template <typename T>
-void vJoinAux(Node<T>* pc_node, Tree<T>* pc_other) {
-	int children_count = (int)pc_node->iGetChildrenCount();
-	if (children_count == 0) {
-		pc_node->pcGetParent()->vSetNthChild((pc_node->pcGetParent()->iGetChildrenCount() - 1), pc_other->pcGetRoot());
-	} else {
-		vJoinAux(pc_node->pcGetNthChild(children_count - 1), pc_other);
-	}
-}
 
 template <typename T>
 std::vector<std::string> vecGetVariablesAux(Node<T>* pc_current_node, std::vector<std::string> vec_variables) {
@@ -155,6 +167,19 @@ std::vector<std::string> Tree<T>::vecGetVariables() {
 		}
 	}
 	return vec_variables;
+}
+
+template <typename T>
+void vJoinAux(Node<T>* pc_node, Tree<T>* pc_other) {
+	int children_count = (int)pc_node->iGetChildrenCount();
+	if (children_count == 0) {
+		pc_node->pcGetParent()->vSetNthChild(
+			pc_node->pcGetParent()->iGetChildrenCount() - 1,
+			pc_other->pcGetRoot()
+		);
+	} else {
+		vJoinAux(pc_node->pcGetNthChild(children_count - 1), pc_other);
+	}
 }
 
 template <typename T>

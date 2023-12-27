@@ -25,6 +25,7 @@ private:
 public:
 	Token(ETokenType e_token_type, T t_value, std::string s_lexeme) : e_token_type(e_token_type), t_value(t_value), s_lexeme(s_lexeme), i_arguments_quantity(0) {}
 	Token(ETokenType e_token_type, T t_value, std::string s_lexeme, int i_arguments_quantity) : e_token_type(e_token_type), t_value(t_value), s_lexeme(s_lexeme), i_arguments_quantity(i_arguments_quantity) {}
+	Token(Token& pc_token) : e_token_type(pc_token.e_token_type), t_value(pc_token.t_value), s_lexeme(pc_token.s_lexeme), i_arguments_quantity(pc_token.i_arguments_quantity) {}
 	inline ETokenType eGetTokenType() { return e_token_type; }
 	inline T tGetValue() { return t_value; }
 	inline std::string sGetLexeme() { return s_lexeme; }
