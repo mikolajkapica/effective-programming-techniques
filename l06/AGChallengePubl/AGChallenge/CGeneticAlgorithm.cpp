@@ -52,7 +52,8 @@ void CGeneticAlgorithm::vInitialize(CLFLnetEvaluator& c_evaluator, int i_populat
 	// update elite
 	vec_elite.resize(i_population_size);
 	std::copy(vec_population.begin(), vec_population.end(), vec_elite.begin());
-	std::nth_element(vec_elite.begin(), vec_elite.begin() + i_elitism_size, vec_elite.end(), [](CIndividual* a, CIndividual* b) { return a->dGetFitness() > b->dGetFitness(); });
+	std::sort(vec_elite.begin(), vec_elite.end(), [](CIndividual* a, CIndividual* b) { return a->dGetFitness() > b->dGetFitness(); });
+	vec_elite.resize(i_elitism_size);
 
 	// update best individual
 	pc_best_individual = new CIndividual(*vec_elite[0]);
@@ -77,15 +78,15 @@ void CGeneticAlgorithm::vRunIteration()
 		if (dRand() < f_crossover_rate)
 		{
 			// crossover
-			std::pair<CIndividual, CIndividual> p_children = pc_parent1.cCrossover(pc_parent2, c_evaluator);
+			std::pair<CIndividual, CIndividual> p_children = pc_parent1.cCrossover(pc_parent2);
 
 			pc_parent1 = p_children.first;
 			pc_parent2 = p_children.second;
 		}
 
 		// mutation
-		if (dRand() < f_mutation_rate) pc_parent1.vMutate(c_evaluator);
-		if (dRand() < f_mutation_rate) pc_parent2.vMutate(c_evaluator);
+		pc_parent1.vMutate(f_mutation_rate);
+		pc_parent2.vMutate(f_mutation_rate);
 
 		// add children to new population
 		vec_new_population[i] = new CIndividual(pc_parent1);
@@ -106,7 +107,8 @@ void CGeneticAlgorithm::vRunIteration()
 	// update elite
 	vec_elite.resize(i_population_size);
 	std::copy(vec_population.begin(), vec_population.end(), vec_elite.begin());
-	std::nth_element(vec_elite.begin(), vec_elite.begin() + i_elitism_size, vec_elite.end(), [](CIndividual* a, CIndividual* b) { return a->dGetFitness() > b->dGetFitness(); });
+	std::sort(vec_elite.begin(), vec_elite.end(), [](CIndividual* a, CIndividual* b) { return a->dGetFitness() > b->dGetFitness(); });
+	vec_elite.resize(i_elitism_size);
 
 	// update best individual
 	pc_best_individual = new CIndividual(*vec_elite[0]);
