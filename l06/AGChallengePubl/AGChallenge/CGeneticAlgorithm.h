@@ -30,11 +30,15 @@ public:
 		float f_crossover_rate,
 		float f_mutation_rate
 	);
+	~CGeneticAlgorithm() {
+		for (int i = 0; i < vec_population.size(); i++)
+		{
+			delete vec_population[i];
+		}
+		delete pc_best_individual;
+	}
 
 	void vRunIteration();
 
 	CIndividual *pcGetBestIndividual() { return pc_best_individual; };
 };
-
-// TODO: deallocation??
-

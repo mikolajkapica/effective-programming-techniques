@@ -13,10 +13,7 @@ private:
 	double d_fitness;
 
 public:
-	CIndividual(std::vector<int> vec_genotype, CLFLnetEvaluator& c_evaluator) : vec_genotype(vec_genotype), c_evaluator(c_evaluator) 
-	{
-		d_fitness = dEvaluateFitness();
-	};
+	CIndividual(std::vector<int> vec_genotype, CLFLnetEvaluator& c_evaluator) : vec_genotype(vec_genotype), c_evaluator(c_evaluator) {};
 	CIndividual(const CIndividual& cOther) : c_evaluator(cOther.c_evaluator), vec_genotype(cOther.vec_genotype), d_fitness(cOther.d_fitness) {};
 	~CIndividual() {};
 	CIndividual& operator=(const CIndividual& cOther) {
@@ -39,7 +36,7 @@ public:
 	}
 
 
-	double dEvaluateFitness() { return c_evaluator.dEvaluate(&vec_genotype); };
+	void vEvaulateAndSetFitness() { this->d_fitness = c_evaluator.dEvaluate(&vec_genotype); };
 	std::pair<CIndividual, CIndividual> cCrossover(const CIndividual &cSecondParent) const;
 	void vMutate(float f_mutation_rate);
 

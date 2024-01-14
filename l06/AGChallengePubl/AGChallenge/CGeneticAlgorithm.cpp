@@ -2,6 +2,22 @@
 #include <numeric>
 #include <functional>
 
+template<typename T>
+std::vector<T> vecGetNBest(std::vector<T> vec, int n, std::function<bool(T, T)> f_compare)
+{
+	std::vector<T> vec_best(n);
+	std::copy(vec.begin(), vec.begin() + n, vec_best.begin());
+
+	for (int i = n; i < vec.size(); i++) {
+		if (f_compare(vec[i], vec_best[n - 1])) {
+			vec_best[n - 1] = vec[i];
+			std::sort(vec_best.begin(), vec_best.end(), f_compare);
+		}
+	}
+
+	return vec_best;
+}
+
 CIndividual CGeneticAlgorithm::cGetTournamentWinner() 
 {
 	CIndividual* pc_best = vec_population[distrib(gen)];
@@ -50,10 +66,7 @@ void CGeneticAlgorithm::vInitialize(CLFLnetEvaluator& c_evaluator, int i_populat
 	}
 
 	// update elite
-	vec_elite.resize(i_population_size);
-	std::copy(vec_population.begin(), vec_population.end(), vec_elite.begin());
-	std::sort(vec_elite.begin(), vec_elite.end(), [](CIndividual* a, CIndividual* b) { return a->dGetFitness() > b->dGetFitness(); });
-	vec_elite.resize(i_elitism_size);
+	vec_elite = vecGetNBest<CIndividual*>(vec_population, i_elitism_size, [](CIndividual* a, CIndividual* b) { return a->dGetFitness() > b->dGetFitness(); });
 
 	// update best individual
 	pc_best_individual = new CIndividual(*vec_elite[0]);
@@ -89,7 +102,9 @@ void CGeneticAlgorithm::vRunIteration()
 		pc_parent2.vMutate(f_mutation_rate);
 
 		// add children to new population
-		vec_new_population[i] = new CIndividual(pc_parent1);
+		if (i < i_population_size)
+			vec_new_population[i] = new CIndividual(pc_parent1);
+
 		if (i + 1 < i_population_size) 
 		{
 			vec_new_population[i + 1] = new CIndividual(pc_parent2);
@@ -97,19 +112,25 @@ void CGeneticAlgorithm::vRunIteration()
 		}
 	}
 
-	// assign new population
+	// evaluate new population
+	for (int i = 0; i < i_population_size; i++)
+	{
+		vec_new_population[i]->vEvaulateAndSetFitness();
+	}
+
+	// delete old population
 	for (int i = 0; i < vec_population.size(); i++) 
 	{
 		delete vec_population[i];
 	}
+
+	// assign new population
 	vec_population = vec_new_population;
 
 	// update elite
-	vec_elite.resize(i_population_size);
-	std::copy(vec_population.begin(), vec_population.end(), vec_elite.begin());
-	std::sort(vec_elite.begin(), vec_elite.end(), [](CIndividual* a, CIndividual* b) { return a->dGetFitness() > b->dGetFitness(); });
-	vec_elite.resize(i_elitism_size);
+	vec_elite = vecGetNBest<CIndividual*>(vec_population, i_elitism_size, [](CIndividual* a, CIndividual* b) { return a->dGetFitness() > b->dGetFitness(); });
 
 	// update best individual
 	pc_best_individual = new CIndividual(*vec_elite[0]);
 }	
+

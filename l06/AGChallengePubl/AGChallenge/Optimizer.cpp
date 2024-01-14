@@ -25,30 +25,29 @@ void COptimizer::vInitialize()
 	d_current_best_fitness = -DBL_MAX;
 	v_current_best.clear();
 
-	#define DEFAULT_POPULATION_SIZE 150
-	#define DEFAULT_TOURNAMENT_SIZE 10
-	#define DEFAULT_ELITISM_SIZE 5
-	#define DEFAULT_CROSSOVER_RATE 0.9
+	#define DEFAULT_POPULATION_SIZE 100
+	#define DEFAULT_TOURNAMENT_SIZE 12
+	#define DEFAULT_ELITISM_SIZE 3
+	#define DEFAULT_CROSSOVER_RATE 0.97
 	#define DEFAULT_MUTATION_RATE 0.001
 	c_ga.vInitialize(c_evaluator, DEFAULT_POPULATION_SIZE, DEFAULT_TOURNAMENT_SIZE, DEFAULT_ELITISM_SIZE, DEFAULT_CROSSOVER_RATE, DEFAULT_MUTATION_RATE);
 }//void COptimizer::vInitialize()
 
-void COptimizer::vRunIteration(double d_time_passed)
+void COptimizer::vRunIteration()
 {
 	vector<int> v_candidate;
 	//v_fill_randomly(v_candidate);
 
 	this->c_ga.vRunIteration();
 	v_candidate = this->c_ga.pcGetBestIndividual()->vecGetGenotype();
-
-	double d_candidate_fitness = c_evaluator.dEvaluate(&v_candidate);
+	double d_candidate_fitness = this->c_ga.pcGetBestIndividual()->dGetFitness();
 
 	if (d_candidate_fitness > d_current_best_fitness)
 	{
 		v_current_best = v_candidate;
 		d_current_best_fitness = d_candidate_fitness;
 
-		cout << "GEN=" << i_number_of_generations << " | TIME: " << d_time_passed << "s -> " << d_current_best_fitness << endl;
+		std::cout << "GEN=" << i_number_of_generations << " Fitness=" << d_current_best_fitness << std::endl;
 	}//if (d_candidate_fitness > d_current_best_fitness)
 	i_number_of_generations++;
 }//void COptimizer::vRunIteration()

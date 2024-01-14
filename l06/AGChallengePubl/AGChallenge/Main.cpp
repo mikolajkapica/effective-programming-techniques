@@ -10,7 +10,7 @@ using namespace TimeCounters;
 
 using namespace std;
 
-#define dMAX_TIME 5 * 60
+#define dMAX_TIME 20 * 60 
 
 
 void vRunExperiment(CLFLnetEvaluator &cConfiguredEvaluator)
@@ -31,7 +31,7 @@ void vRunExperiment(CLFLnetEvaluator &cConfiguredEvaluator)
 
 		while (d_time_passed <= dMAX_TIME)
 		{
-			c_optimizer.vRunIteration(d_time_passed);
+			c_optimizer.vRunIteration();
 			c_optimizer.pvGetCurrentBest();
 
 			c_time_counter.bGetTimePassed(&d_time_passed);

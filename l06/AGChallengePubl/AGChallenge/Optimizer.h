@@ -15,7 +15,7 @@ public:
 	COptimizer(CLFLnetEvaluator &cEvaluator);
 
 	void vInitialize();
-	void vRunIteration(double d_time_passed);
+	void vRunIteration();
 
 	vector<int> *pvGetCurrentBest() { return &v_current_best; }
 
